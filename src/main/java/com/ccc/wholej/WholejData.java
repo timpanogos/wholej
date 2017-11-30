@@ -20,11 +20,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("javadoc")
-public class Wholej
+public class WholejData
 {
     private final Map<String, HoleInfo> map;
 
-    private Wholej()
+    private WholejData()
     {
         map = new HashMap<>();
     }
@@ -180,7 +180,7 @@ public class Wholej
         private int value;
     }
 
-    private enum BattleShip
+    public enum BattleShip
     {
         Apocalypse(97100000), Armageddon(105200000), Abaddon(103200000),    // ammar
         Scorpion(103600000), Rokh(105300000), Raven(99300000),              // caldari

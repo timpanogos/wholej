@@ -1,7 +1,7 @@
 /*
  * This work is protected by Copyright, see COPYING.txt for more information.
  */
-package org.emitdo.research.app.dbAdmin;
+package com.ccc.wholej.swing;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -12,69 +12,60 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import com.ccc.tools.app.swing.FrameBase;
+import com.ccc.wholej.swing.view.HolePanel;
 
-import org.emitdo.app.logging.LoggerCommands;
-import org.emitdo.app.util.Commands;
-import org.emitdo.internal.as.storage.jdb.JdbAsdbSqlGenerator;
-import org.emitdo.research.app.dbAdmin.model.DerbyServerData;
-import org.emitdo.research.app.dbAdmin.model.RmiData;
-import org.emitdo.research.app.dbAdmin.model.RmiJdbData;
-import org.emitdo.research.app.dbAdmin.view.ServerPanel;
-import org.emitdo.research.app.dbAdmin.view.connection.AsConnectionPanel;
-import org.emitdo.research.app.swing.FrameBase;
-import org.emitdo.research.app.swing.FrameBase.CloseListener;
-
-public final class DbAdmin extends FrameBase implements CloseListener
+public final class Wholej extends FrameBase implements FrameBase.CloseListener
 {
-    public static DbAdminCommands asAdminCommands;
-    public static final JdbAsdbSqlGenerator AsGenerator = new JdbAsdbSqlGenerator("asdb");
+//    public static WholejCommands asAdminCommands;
+//    public static final JdbAsdbSqlGenerator AsGenerator = new JdbAsdbSqlGenerator("asdb");
     public static final String DbAdminPrefixKey = "org.emitdo.app.dbAdmin";
     public static final String AsAdminPreferencesNode = "org/emitdo/research/app/dbAdmin";
     
-    private static final String DefaultLogFile = "/var/opt/enc/app/log/dbAdmin.log";
+    private static final String DefaultLogFile = "/var/opt/ccc/wholej/log/wholej.log";
     
-    private static final String ApplicationTitle = "Db Admin";
+    private static final String ApplicationTitle = "WholejData";
     
-    private final StorageControl storageControl;
-    private final ConnectionControl connectionControl;
-    private final DerbyServerData derbyServerData;
-    private final RmiData rmiData;
-    @SuppressWarnings("unused")
-    private final RmiJdbData rmiJdbClusterData;
-    @SuppressWarnings("unused")
-    private final RmiJdbData rmiJdbPlatformData;
-    @SuppressWarnings("unused")
-    private final RmiJdbData rmiJdbFactoryData;
+//    private final StorageControl storageControl;
+//    private final ConnectionControl connectionControl;
+//    private final org.emitdo.research.app.dbAdmin.model.DerbyServerData derbyServerData;
+//    private final RmiData rmiData;
+//    @SuppressWarnings("unused")
+//    private final RmiJdbData rmiJdbClusterData;
+//    @SuppressWarnings("unused")
+//    private final RmiJdbData rmiJdbPlatformData;
+//    @SuppressWarnings("unused")
+//    private final RmiJdbData rmiJdbFactoryData;
     
-    public DbAdmin()
+    public Wholej()
     {
         super(ApplicationTitle, AsAdminPreferencesNode);
-        connectionControl = new ConnectionControl(this);
-        storageControl = new StorageControl(this);
+//        connectionControl = new ConnectionControl(this);
+//        storageControl = new StorageControl(this);
         addCloseListener(this);
-        derbyServerData = new DerbyServerData(getUserRoot());
-        rmiData = new RmiData(userRoot);
-        rmiJdbClusterData = new RmiJdbData(DomainType.Cluster, rmiData, userRoot);
-        rmiJdbPlatformData = new RmiJdbData(DomainType.Res, rmiData, userRoot);
-        rmiJdbFactoryData = new RmiJdbData(DomainType.Factory, rmiData, userRoot);
+//        derbyServerData = new DerbyServerData(getUserRoot());
+//        rmiData = new RmiData(userRoot);
+//        rmiJdbClusterData = new RmiJdbData(DomainType.Cluster, rmiData, userRoot);
+//        rmiJdbPlatformData = new RmiJdbData(DomainType.Res, rmiData, userRoot);
+//        rmiJdbFactoryData = new RmiJdbData(DomainType.Factory, rmiData, userRoot);
     }
 
     @Override
     public void setBusy(boolean busy)
     {
-        storageControl.setBusy(busy);
-        connectionControl.setBusy(busy);
+//        storageControl.setBusy(busy);
+//        connectionControl.setBusy(busy);
     }
     
-    public ConnectionControl getConnectionControl()
-    {
-        return connectionControl;
-    }
-    
-    public StorageControl getStorageControl()
-    {
-        return storageControl;
-    }
+//    public ConnectionControl getConnectionControl()
+//    {
+//        return connectionControl;
+//    }
+//
+//    public StorageControl getStorageControl()
+//    {
+//        return storageControl;
+//    }
     
     @Override
     public JMenuBar createMenu()
@@ -86,14 +77,15 @@ public final class DbAdmin extends FrameBase implements CloseListener
         // file Menu
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic(MenuFileMnemonic);
-        new ServerAction(fileMenu, toolBar);
-        new ClearUserPreferencesAction(fileMenu, toolBar, this);
-        fileMenu.addSeparator();
-        new ExitAction(fileMenu, toolBar);
+//        new ServerAction(fileMenu, toolBar);
+//        new ClearUserPreferencesAction(fileMenu, toolBar, this);
+//        fileMenu.addSeparator();
+//        new ExitAction(fileMenu, toolBar);
+        new ExitAction(fileMenu);
         menuBar.add(fileMenu);
-        
-        connectionControl.addMenu(menuBar, toolBar);
-        storageControl.addMenu(menuBar, toolBar);
+//
+//        connectionControl.addMenu(menuBar, toolBar);
+//        storageControl.addMenu(menuBar, toolBar);
         return menuBar;
     }
 
@@ -183,44 +175,44 @@ public final class DbAdmin extends FrameBase implements CloseListener
     @Override
     protected void initGui()
     {
-        swapContentPane(new AsConnectionPanel(this));
+        swapContentPane(new HolePanel(this));
         super.initGui();
     }
     
-    @Override
+//    @Override
     public void close()
     {
-        storageControl.close();
-        connectionControl.close();
+//        storageControl.close();
+//        connectionControl.close();
         System.exit(0);
     }
     
-    final class ServerAction extends AbstractAction
+    final class ServerAction //extends AbstractAction
     {
         public final String Image = "exit.gif";
         public static final String Label = "Derby Server...";
         public static final String MouseOver = "Control the Derby/JavaDB Server";
-        public final int Mnemonic = DbAdmin.ServerActionMnemonic;
-        public final int Accelerator = DbAdmin.ServerActionAccelerator;
+        public final int Mnemonic = Wholej.ServerActionMnemonic;
+        public final int Accelerator = Wholej.ServerActionAccelerator;
         public static final int AcceleratorMask = ActionEvent.ALT_MASK;
 
         public ServerAction(JMenu menu, JToolBar toolBar)
         {
-            putValue(NAME, Label);
-            putValue(ACTION_COMMAND_KEY, Label);
-            putValue(MNEMONIC_KEY, new Integer(Mnemonic));
-            putValue(SHORT_DESCRIPTION, MouseOver);
-
-            JMenuItem item = menu.add(this);
-            item.setAccelerator(KeyStroke.getKeyStroke(Accelerator, AcceleratorMask));
-            setEnabled(true);
+//            putValue(NAME, Label);
+//            putValue(ACTION_COMMAND_KEY, Label);
+//            putValue(MNEMONIC_KEY, new Integer(Mnemonic));
+//            putValue(SHORT_DESCRIPTION, MouseOver);
+//
+//            JMenuItem item = menu.add(this);
+//            item.setAccelerator(KeyStroke.getKeyStroke(Accelerator, AcceleratorMask));
+//            setEnabled(true);
         }
 
-        @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            swapContentPane(new ServerPanel(derbyServerData, DbAdmin.this));
-        }
+//        @Override
+//        public void actionPerformed(ActionEvent e)
+//        {
+//            swapContentPane(new ServerPanel(derbyServerData, WholejData.this));
+//        }
     }
     
     public enum DomainType
@@ -255,14 +247,14 @@ public final class DbAdmin extends FrameBase implements CloseListener
     {
         try 
         {
-            AsGenerator.setUseSameConnection(true, true);
-            
-            Commands[] commands = new Commands[3];
-            commands[0] = AsGenerator;
-            asAdminCommands = new DbAdminCommands(args);
-            asAdminCommands.setLog4j(true, LoggerCommands.DefaultLog4jConfig, null, true, false);
-            asAdminCommands.setLogFile(DefaultLogFile, false);
-            new DbAdmin().nextStartupPhase();
+//            AsGenerator.setUseSameConnection(true, true);
+//
+//            Commands[] commands = new Commands[3];
+//            commands[0] = AsGenerator;
+//            asAdminCommands = new WholejCommands(args);
+//            asAdminCommands.setLog4j(true, LoggerCommands.DefaultLog4jConfig, null, true, false);
+//            asAdminCommands.setLogFile(DefaultLogFile, false);
+            new Wholej().nextStartupPhase();
         }catch(Exception e) 
         {
             e.printStackTrace();

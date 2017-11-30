@@ -1,7 +1,7 @@
 /*
  * This work is protected by Copyright, see COPYING.txt for more information.
  */
-package org.emitdo.research.app.dbAdmin.view.connection;
+package com.ccc.wholej.swing.view;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -27,36 +27,38 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.emitdo.research.app.dbAdmin.ConnectionControl;
-import org.emitdo.research.app.dbAdmin.DbAdmin;
-import org.emitdo.research.app.dbAdmin.DbAdmin.ConnType;
-import org.emitdo.research.app.dbAdmin.DbAdmin.DomainType;
-import org.emitdo.research.app.dbAdmin.DbAdmin.StorageType;
-import org.emitdo.research.app.dbAdmin.DbAdmin.VendorType;
-import org.emitdo.research.app.dbAdmin.model.ConnectionData;
-import org.emitdo.research.app.swing.FrameBase;
-import org.emitdo.research.app.swing.SwappedFocusListener;
+//import org.emitdo.research.app.dbAdmin.ConnectionControl;
+import com.ccc.tools.app.swing.FrameBase;
+import com.ccc.tools.app.swing.SwappedFocusListener;
+import com.ccc.wholej.swing.Wholej;
+import com.ccc.wholej.swing.Wholej.ConnType;
+import com.ccc.wholej.swing.Wholej.DomainType;
+import com.ccc.wholej.swing.Wholej.VendorType;
+//import org.emitdo.research.app.dbAdmin.model.ConnectionData;
+//import org.emitdo.research.app.swing.FrameBase;
+//import org.emitdo.research.app.swing.SwappedFocusListener;
 
-public class AsConnectionPanel extends JPanel implements ActionListener, DocumentListener, SwappedFocusListener, WindowFocusListener
+public class HolePanel extends JPanel implements ActionListener, DocumentListener, SwappedFocusListener, WindowFocusListener
 {
     private final int numberOfColumns = 52;
-    private final DbAdmin dbAdmin;
-    private final ConnectionControl control;
-    private ConnectionData connection;
+    private final Wholej wholej;
+//    private final ConnectionControl control;
+//    private ConnectionData connection;
+
+
+    private JRadioButton apocalypseRadio;
+    private JRadioButton armageddonRadio;
+    private JRadioButton abaddonRadio;
+    private JRadioButton scorpionRadio;
+    private JRadioButton rokhRadio;
+    private JRadioButton ravenRadio;
     
-    private JRadioButton oracleClusterRadio; 
-    private JRadioButton oracleResRadio;
-    private JRadioButton oracleFactoryRadio;
-    private JRadioButton oracleRgRadio;
-    private JRadioButton oracleBatteryRadio;
-    private JRadioButton oracleAncillaryRadio;
-    
-    private JRadioButton jdbClusterRadio; 
-    private JRadioButton jdbResRadio;
-    private JRadioButton jdbFactoryRadio;
-    private JRadioButton jdbRgRadio;
-    private JRadioButton pgClusterRadio; 
-    private JRadioButton pgResRadio;
+    private JRadioButton megathronRadio;
+    private JRadioButton dominixRadio;
+    private JRadioButton hyperionRadio;
+    private JRadioButton typhoonRadio;
+    private JRadioButton maelstromRadio;
+    private JRadioButton tempestRadio;
     private JRadioButton pgFactoryRadio;
     private JRadioButton pgBatteryRadio;
     private JRadioButton pgAncillaryRadio;
@@ -94,10 +96,10 @@ public class AsConnectionPanel extends JPanel implements ActionListener, Documen
     
     private final AtomicBoolean painted;
     
-    public AsConnectionPanel(DbAdmin dbAdmin)
+    public HolePanel(Wholej wholej)
     {
-        this.dbAdmin = dbAdmin;
-        control = dbAdmin.getConnectionControl();
+        this.wholej = wholej;
+//        control = wholej.getConnectionControl();
         painted = new AtomicBoolean(false);
         
         setLayout(new BorderLayout());
@@ -108,20 +110,27 @@ public class AsConnectionPanel extends JPanel implements ActionListener, Documen
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(new TitledBorder("Oracle Connections"));
-        
+//    public enum BattleShip
+//    {
+//        Apocalypse(97100000), Armageddon(105200000), Abaddon(103200000),    // ammar
+//        Scorpion(103600000), Rokh(105300000), Raven(99300000),              // caldari
+//        Megathron(98400000), Dominix(100250000), Hyperion(100200000),       // gallente
+//        Typhoon(100600000), Maelstrom(103600000), Tempest(99500000);        // minmatar
+
+
         AtomicInteger maxWidth = new AtomicInteger();
-        JLabel oracleClusterLabel = FrameBase.getLabel("Cluster:", maxWidth);
-        JLabel oracleResLabel = FrameBase.getLabel("Res:", maxWidth);
-        JLabel oracleBatteryLabel = FrameBase.getLabel("Battery:", maxWidth);
-        JLabel oracleAncillaryLabel = FrameBase.getLabel("Ancillary:", maxWidth);
-        JLabel oracleFactoryLabel = FrameBase.getLabel("Factory:", maxWidth);
-        JLabel oracleRgLabel = FrameBase.getLabel("Res Gateway:", maxWidth);
-        JLabel jdbClusterLabel = FrameBase.getLabel("Cluster:", maxWidth);
-        JLabel jdbResLabel = FrameBase.getLabel("Res:", maxWidth);
-        JLabel jdbFactoryLabel = FrameBase.getLabel("Factory:", maxWidth);
-        JLabel jdbRgLabel = FrameBase.getLabel("Res Gateway:", maxWidth);
-        JLabel pgClusterLabel = FrameBase.getLabel("Cluster:", maxWidth);
-        JLabel pgResLabel = FrameBase.getLabel("Res:", maxWidth);
+        JLabel apocalypseLabel = FrameBase.getLabel("Cluster:", maxWidth);
+        JLabel armageddonLabel = FrameBase.getLabel("Res:", maxWidth);
+        JLabel abaddonLabel = FrameBase.getLabel("Battery:", maxWidth);
+        JLabel scorpionLabel = FrameBase.getLabel("Ancillary:", maxWidth);
+        JLabel rokhLabel = FrameBase.getLabel("Factory:", maxWidth);
+        JLabel ravenLabel = FrameBase.getLabel("Res Gateway:", maxWidth);
+        JLabel megathronLabel = FrameBase.getLabel("Cluster:", maxWidth);
+        JLabel dominixLabel = FrameBase.getLabel("Res:", maxWidth);
+        JLabel hyperionLabel = FrameBase.getLabel("Factory:", maxWidth);
+        JLabel typhoonLabel = FrameBase.getLabel("Res Gateway:", maxWidth);
+        JLabel maelstromLabel = FrameBase.getLabel("Cluster:", maxWidth);
+        JLabel tempestLabel = FrameBase.getLabel("Res:", maxWidth);
         JLabel pgBatteryLabel = FrameBase.getLabel("Battery:", maxWidth);
         JLabel pgAncillaryLabel = FrameBase.getLabel("Ancillary:", maxWidth);
         JLabel pgFactoryLabel = FrameBase.getLabel("Factory:", maxWidth);
@@ -155,53 +164,54 @@ public class AsConnectionPanel extends JPanel implements ActionListener, Documen
         
         JPanel rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-        oracleClusterRadio = FrameBase.addRadioButtonToPanel(oracleClusterLabel, true, true, width, -1, "Oracle Cluster DB connection", rowPanel, this);
-        oracleClusterCheck = FrameBase.addCheckBoxToPanel(oracleClusterConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Cluster, VendorType.Oracle, oracleClusterRadio, oracleClusterCheck);
+//        apocalypseRadio = FrameBase.addRadioButtonToPanel(apocalypseLabel, true, true, width, -1, "Oracle Cluster DB connection", rowPanel, this);
+
+//        oracleClusterCheck = FrameBase.addCheckBoxToPanel(oracleClusterConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
+        associateState(DomainType.Cluster, VendorType.Oracle, apocalypseRadio, oracleClusterCheck);
         panel.add(rowPanel);
         
         rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-        oracleResRadio = FrameBase.addRadioButtonToPanel(oracleResLabel, false, true, width, -1, "Oracle Res DB connection", rowPanel, this);
-        oracleResCheck = FrameBase.addCheckBoxToPanel(oracleResConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Res, VendorType.Oracle, oracleResRadio, oracleResCheck);
+//        armageddonRadio = FrameBase.addRadioButtonToPanel(armageddonLabel, false, true, width, -1, "Oracle Res DB connection", rowPanel, this);
+//        oracleResCheck = FrameBase.addCheckBoxToPanel(oracleResConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
+        associateState(DomainType.Res, VendorType.Oracle, armageddonRadio, oracleResCheck);
         panel.add(rowPanel);
         
         rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-        oracleBatteryRadio = FrameBase.addRadioButtonToPanel(oracleBatteryLabel, false, true, width, -1, "Oracle Battery DB connection", rowPanel, this);
-        oracleBatteryCheck = FrameBase.addCheckBoxToPanel(oracleBatteryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Battery, VendorType.Oracle, oracleBatteryRadio, oracleBatteryCheck);
+//        rokhRadio = FrameBase.addRadioButtonToPanel(abaddonLabel, false, true, width, -1, "Oracle Battery DB connection", rowPanel, this);
+//        oracleBatteryCheck = FrameBase.addCheckBoxToPanel(oracleBatteryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
+        associateState(DomainType.Battery, VendorType.Oracle, rokhRadio, oracleBatteryCheck);
         panel.add(rowPanel);
         
         rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-        oracleAncillaryRadio = FrameBase.addRadioButtonToPanel(oracleAncillaryLabel, false, true, width, -1, "Oracle Ancillary DB connection", rowPanel, this);
-        oracleAncillaryCheck = FrameBase.addCheckBoxToPanel(oracleAncillaryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Ancillary, VendorType.Oracle, oracleAncillaryRadio, oracleAncillaryCheck);
+//        ravenRadio = FrameBase.addRadioButtonToPanel(scorpionLabel, false, true, width, -1, "Oracle Ancillary DB connection", rowPanel, this);
+//        oracleAncillaryCheck = FrameBase.addCheckBoxToPanel(oracleAncillaryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
+        associateState(DomainType.Ancillary, VendorType.Oracle, ravenRadio, oracleAncillaryCheck);
         panel.add(rowPanel);
         
         rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-        oracleFactoryRadio = FrameBase.addRadioButtonToPanel(oracleFactoryLabel, false, true, width, -1, "Oracle Factory DB connection", rowPanel, this);
-        oracleFactoryCheck = FrameBase.addCheckBoxToPanel(oracleFactoryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Factory, VendorType.Oracle, oracleFactoryRadio, oracleFactoryCheck);
+//        abaddonRadio = FrameBase.addRadioButtonToPanel(rokhLabel, false, true, width, -1, "Oracle Factory DB connection", rowPanel, this);
+//        oracleFactoryCheck = FrameBase.addCheckBoxToPanel(oracleFactoryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
+        associateState(DomainType.Factory, VendorType.Oracle, abaddonRadio, oracleFactoryCheck);
         panel.add(rowPanel);
         
         rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-        oracleRgRadio = FrameBase.addRadioButtonToPanel(oracleRgLabel, false, true, width, -1, "Oracle Residential Gateway DB connection", rowPanel, this);
-        oracleRgCheck = FrameBase.addCheckBoxToPanel(oracleRgConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Rg, VendorType.Oracle, oracleRgRadio, oracleRgCheck);
+//        scorpionRadio = FrameBase.addRadioButtonToPanel(ravenLabel, false, true, width, -1, "Oracle Residential Gateway DB connection", rowPanel, this);
+//        oracleRgCheck = FrameBase.addCheckBoxToPanel(oracleRgConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
+        associateState(DomainType.Rg, VendorType.Oracle, scorpionRadio, oracleRgCheck);
         panel.add(rowPanel);
         
         ButtonGroup group = new ButtonGroup();
-        group.add(oracleClusterRadio);
-        group.add(oracleResRadio);
-        group.add(oracleBatteryRadio);
-        group.add(oracleAncillaryRadio);
-        group.add(oracleFactoryRadio);
-        group.add(oracleRgRadio);
+        group.add(apocalypseRadio);
+        group.add(armageddonRadio);
+        group.add(rokhRadio);
+        group.add(ravenRadio);
+        group.add(abaddonRadio);
+        group.add(scorpionRadio);
 
         mainPanel.add(panel);
         
@@ -211,37 +221,37 @@ public class AsConnectionPanel extends JPanel implements ActionListener, Documen
         
         rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-        jdbClusterRadio = FrameBase.addRadioButtonToPanel(jdbClusterLabel, false, true, width, -1, "JavaDB Cluster DB connection", rowPanel, this);
-        jdbClusterCheck = FrameBase.addCheckBoxToPanel(jdbClusterConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Cluster, VendorType.JavaDb, jdbClusterRadio, jdbClusterCheck);
+//        megathronRadio = FrameBase.addRadioButtonToPanel(megathronLabel, false, true, width, -1, "JavaDB Cluster DB connection", rowPanel, this);
+//        jdbClusterCheck = FrameBase.addCheckBoxToPanel(jdbClusterConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
+        associateState(DomainType.Cluster, VendorType.JavaDb, megathronRadio, jdbClusterCheck);
         panel.add(rowPanel);
         
         rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-        jdbResRadio = FrameBase.addRadioButtonToPanel(jdbResLabel, false, true, width, -1, "JavaDB Res DB connection", rowPanel, this);
-        jdbResCheck = FrameBase.addCheckBoxToPanel(jdbResConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Res, VendorType.JavaDb, jdbResRadio, jdbResCheck);
+//        dominixRadio = FrameBase.addRadioButtonToPanel(dominixLabel, false, true, width, -1, "JavaDB Res DB connection", rowPanel, this);
+//        jdbResCheck = FrameBase.addCheckBoxToPanel(jdbResConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
+        associateState(DomainType.Res, VendorType.JavaDb, dominixRadio, jdbResCheck);
         panel.add(rowPanel);
         
         rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-        jdbFactoryRadio = FrameBase.addRadioButtonToPanel(jdbFactoryLabel, false, true, width, -1, "JavaDB Factory DB connection", rowPanel, this);
-        jdbFactoryCheck = FrameBase.addCheckBoxToPanel(jdbFactoryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Factory, VendorType.JavaDb, jdbFactoryRadio, jdbFactoryCheck);
+//        hyperionRadio = FrameBase.addRadioButtonToPanel(hyperionLabel, false, true, width, -1, "JavaDB Factory DB connection", rowPanel, this);
+//        jdbFactoryCheck = FrameBase.addCheckBoxToPanel(jdbFactoryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
+        associateState(DomainType.Factory, VendorType.JavaDb, hyperionRadio, jdbFactoryCheck);
         panel.add(rowPanel);
         
         rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-        jdbRgRadio = FrameBase.addRadioButtonToPanel(jdbRgLabel, false, true, width, -1, "JavaDB Residential Gateway DB connection", rowPanel, this);
-        jdbRgCheck = FrameBase.addCheckBoxToPanel(jdbRgConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Rg, VendorType.JavaDb, jdbRgRadio, jdbRgCheck);
+//        typhoonRadio = FrameBase.addRadioButtonToPanel(typhoonLabel, false, true, width, -1, "JavaDB Residential Gateway DB connection", rowPanel, this);
+//        jdbRgCheck = FrameBase.addCheckBoxToPanel(jdbRgConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
+        associateState(DomainType.Rg, VendorType.JavaDb, typhoonRadio, jdbRgCheck);
         panel.add(rowPanel);
         
-        group.add(jdbClusterRadio);
-        group.add(jdbResRadio);
-        group.add(jdbResRadio);
-        group.add(jdbFactoryRadio);
-        group.add(jdbRgRadio);
+        group.add(megathronRadio);
+        group.add(dominixRadio);
+        group.add(dominixRadio);
+        group.add(hyperionRadio);
+        group.add(typhoonRadio);
         
         mainPanel.add(panel);
         
@@ -251,41 +261,41 @@ public class AsConnectionPanel extends JPanel implements ActionListener, Documen
         
         rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-        pgClusterRadio = FrameBase.addRadioButtonToPanel(pgClusterLabel, false, true, width, -1, "Postgres Cluster DB connection", rowPanel, this);
-        pgClusterCheck = FrameBase.addCheckBoxToPanel(pgClusterConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Cluster, VendorType.Postgres, pgClusterRadio, pgClusterCheck);
+//        maelstromRadio = FrameBase.addRadioButtonToPanel(maelstromLabel, false, true, width, -1, "Postgres Cluster DB connection", rowPanel, this);
+//        pgClusterCheck = FrameBase.addCheckBoxToPanel(pgClusterConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
+        associateState(DomainType.Cluster, VendorType.Postgres, maelstromRadio, pgClusterCheck);
         panel.add(rowPanel);
         
         rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-        pgResRadio = FrameBase.addRadioButtonToPanel(pgResLabel, false, true, width, -1, "Postgres Res DB connection", rowPanel, this);
-        pgResCheck = FrameBase.addCheckBoxToPanel(pgResConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Res, VendorType.Postgres, pgResRadio, pgResCheck);
+//        tempestRadio = FrameBase.addRadioButtonToPanel(tempestLabel, false, true, width, -1, "Postgres Res DB connection", rowPanel, this);
+//        pgResCheck = FrameBase.addCheckBoxToPanel(pgResConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
+        associateState(DomainType.Res, VendorType.Postgres, tempestRadio, pgResCheck);
         panel.add(rowPanel);
         
         rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-        pgBatteryRadio = FrameBase.addRadioButtonToPanel(pgBatteryLabel, false, true, width, -1, "Postgres Battery DB connection", rowPanel, this);
-        pgBatteryCheck = FrameBase.addCheckBoxToPanel(pgBatteryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
+//        pgBatteryRadio = FrameBase.addRadioButtonToPanel(pgBatteryLabel, false, true, width, -1, "Postgres Battery DB connection", rowPanel, this);
+//        pgBatteryCheck = FrameBase.addCheckBoxToPanel(pgBatteryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
         associateState(DomainType.Battery, VendorType.Postgres, pgBatteryRadio, pgBatteryCheck);
         panel.add(rowPanel);
         
         rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-        pgAncillaryRadio = FrameBase.addRadioButtonToPanel(pgAncillaryLabel, false, true, width, -1, "Postgres Ancillary DB connection", rowPanel, this);
-        pgAncillaryCheck = FrameBase.addCheckBoxToPanel(pgAncillaryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
+//        pgAncillaryRadio = FrameBase.addRadioButtonToPanel(pgAncillaryLabel, false, true, width, -1, "Postgres Ancillary DB connection", rowPanel, this);
+//        pgAncillaryCheck = FrameBase.addCheckBoxToPanel(pgAncillaryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
         associateState(DomainType.Ancillary, VendorType.Postgres, pgAncillaryRadio, pgAncillaryCheck);
         panel.add(rowPanel);
         
         rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-        pgFactoryRadio = FrameBase.addRadioButtonToPanel(pgFactoryLabel, false, true, width, -1, "Postgres Factory DB connection", rowPanel, this);
-        pgFactoryCheck = FrameBase.addCheckBoxToPanel(pgFactoryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
+//        pgFactoryRadio = FrameBase.addRadioButtonToPanel(pgFactoryLabel, false, true, width, -1, "Postgres Factory DB connection", rowPanel, this);
+//        pgFactoryCheck = FrameBase.addCheckBoxToPanel(pgFactoryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
         associateState(DomainType.Factory, VendorType.Postgres, pgFactoryRadio, pgFactoryCheck);
         panel.add(rowPanel);
         
-        group.add(pgClusterRadio);
-        group.add(pgResRadio);
+        group.add(maelstromRadio);
+        group.add(tempestRadio);
         group.add(pgBatteryRadio);
         group.add(pgAncillaryRadio);
         group.add(pgFactoryRadio);
@@ -296,8 +306,8 @@ public class AsConnectionPanel extends JPanel implements ActionListener, Documen
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(new TitledBorder("Connectivity type"));
 
-        jdbcRadio = FrameBase.addRadioButtonToPanel(jdbcLabel, true, true, width, -1, "Use JDBC connectivity", panel, this);
-        webRadio = FrameBase.addRadioButtonToPanel(webLabel, false, true, width, -1, "Use web services connectivity", panel, this);
+//        jdbcRadio = FrameBase.addRadioButtonToPanel(jdbcLabel, true, true, width, -1, "Use JDBC connectivity", panel, this);
+//        webRadio = FrameBase.addRadioButtonToPanel(webLabel, false, true, width, -1, "Use web services connectivity", panel, this);
         group = new ButtonGroup();
         group.add(jdbcRadio);
         group.add(webRadio);
@@ -341,7 +351,7 @@ public class AsConnectionPanel extends JPanel implements ActionListener, Documen
         setState();
         adjustForSelection();
         
-        dbAdmin.swapAndSetFocus(this, userField);
+        wholej.swapAndSetFocus(this, userField);
     }
 
     public void refresh()
@@ -358,12 +368,12 @@ public class AsConnectionPanel extends JPanel implements ActionListener, Documen
 
     private void associateState(DomainType dtype, VendorType vtype, JRadioButton radio, JCheckBox check)
     {
-        ConnectionData ci = control.getConnection(StorageType.As, vtype, dtype, ConnType.Jdbc);
-        ci.checkBox = check;
-        ci.radioButton = radio;
-        ci = control.getConnection(StorageType.As, vtype, dtype, ConnType.Web);
-        ci.checkBox = check;
-        ci.radioButton = radio;
+//        ConnectionData ci = control.getConnection(StorageType.As, vtype, dtype, ConnType.Jdbc);
+//        ci.checkBox = check;
+//        ci.radioButton = radio;
+//        ci = control.getConnection(StorageType.As, vtype, dtype, ConnType.Web);
+//        ci.checkBox = check;
+//        ci.radioButton = radio;
     }
     
     private void setState()
@@ -380,9 +390,9 @@ public class AsConnectionPanel extends JPanel implements ActionListener, Documen
                 ConnType ctype = ConnType.Jdbc;
                 if(!jdbcRadio.isSelected())
                     ctype = ConnType.Web;
-                ConnectionData ci = control.getConnection(StorageType.As, vtype, dtype, ctype);
-                ci.checkBox.setSelected(ci.connected);
-                ci.radioButton.setEnabled(ci.supported);
+//                ConnectionData ci = control.getConnection(StorageType.As, vtype, dtype, ctype);
+//                ci.checkBox.setSelected(ci.connected);
+//                ci.radioButton.setEnabled(ci.supported);
             }
         }
     }
@@ -395,67 +405,67 @@ public class AsConnectionPanel extends JPanel implements ActionListener, Documen
         VendorType vtype = null;
         DomainType dtype = null;
         boolean jdb = false;
-        if(oracleClusterRadio.isSelected()) 
+        if(apocalypseRadio.isSelected())
         {
             vtype = VendorType.Oracle;
             dtype = DomainType.Cluster;
         }else
-        if(oracleResRadio.isSelected())
+        if(armageddonRadio.isSelected())
         {
             vtype = VendorType.Oracle;
             dtype = DomainType.Res;
         }else
-        if(oracleBatteryRadio.isSelected())
+        if(rokhRadio.isSelected())
         {
              vtype = VendorType.Oracle;
              dtype = DomainType.Battery;
         }else
-        if(oracleAncillaryRadio.isSelected())
+        if(ravenRadio.isSelected())
         {
             vtype = VendorType.Oracle;
             dtype = DomainType.Ancillary;
         }else
-        if(oracleFactoryRadio.isSelected())
+        if(abaddonRadio.isSelected())
         {
             vtype = VendorType.Oracle;
             dtype = DomainType.Factory;
         }else
-        if(oracleRgRadio.isSelected())
+        if(scorpionRadio.isSelected())
         {
             vtype = VendorType.Oracle;
             dtype = DomainType.Rg;
         }else
-        if(jdbClusterRadio.isSelected())
+        if(megathronRadio.isSelected())
         {
             vtype = VendorType.JavaDb;
             dtype = DomainType.Cluster;
             jdb = true;
         }else
-        if(jdbResRadio.isSelected())
+        if(dominixRadio.isSelected())
         {
             vtype = VendorType.JavaDb;
             dtype = DomainType.Res;
             jdb = true;
         }else
-        if(jdbFactoryRadio.isSelected())
+        if(hyperionRadio.isSelected())
         {
             vtype = VendorType.JavaDb;
             dtype = DomainType.Factory;
             jdb = true;
         }else
-        if(jdbRgRadio.isSelected())
+        if(typhoonRadio.isSelected())
         {
             vtype = VendorType.JavaDb;
             dtype = DomainType.Rg;
             jdb = true;
         }else
-        if(pgClusterRadio.isSelected())
+        if(maelstromRadio.isSelected())
         {
             vtype = VendorType.Postgres;
             dtype = DomainType.Cluster;
             jdb = false;
         }else
-        if(pgResRadio.isSelected())
+        if(tempestRadio.isSelected())
         {
             vtype = VendorType.Postgres;
             dtype = DomainType.Res;
@@ -479,18 +489,19 @@ public class AsConnectionPanel extends JPanel implements ActionListener, Documen
             dtype = DomainType.Factory;
             jdb = false;
         }
-        connection = control.getConnection(StorageType.As, vtype, dtype, ctype);
+//        connection = control.getConnection(StorageType.As, vtype, dtype, ctype);
         painted.set(false);
-        userField.setText(connection.getUser());
-        passwordField.setText(connection.getPassword());
-        userBaseField.setText(connection.getUserBase());
-        urlField.setText(connection.getUrl());
-        daField.setText(connection.getDataAccessor());
-        homeField.setText(connection.getHome());
+//        userField.setText(connection.getUser());
+//        passwordField.setText(connection.getPassword());
+//        userBaseField.setText(connection.getUserBase());
+//        urlField.setText(connection.getUrl());
+//        daField.setText(connection.getDataAccessor());
+//        homeField.setText(connection.getHome());
         setState();
         homeField.setEditable(jdb ? true : false);
-        dbAdmin.swapAndSetFocus(this, userField);
-        if(!connection.supported)
+        wholej.swapAndSetFocus(this, userField);
+//        if(!connection.supported)
+        if(false)
         {
             saveButton.setEnabled(false);
             resetButton.setEnabled(false);
@@ -510,10 +521,10 @@ public class AsConnectionPanel extends JPanel implements ActionListener, Documen
         urlField.setEnabled(true);
         daField.setEnabled(true);
         homeField.setEnabled(true);
-        saveButton.setEnabled(connection.modified);
+//        saveButton.setEnabled(connection.modified);
         resetButton.setEnabled(false);
         defaultButton.setEnabled(true);
-        preferencesButton.setEnabled(connection.modified);
+//        preferencesButton.setEnabled(connection.modified);
     }
     
     @Override
@@ -527,13 +538,13 @@ public class AsConnectionPanel extends JPanel implements ActionListener, Documen
         }
         if(src == saveButton)
         {
-            connection.guiUser = userField.getText();
-            connection.guiPassword = passwordField.getText();
-            connection.guiUserBase = userBaseField.getText();
-            connection.guiUrl = urlField.getText();
-            connection.guiDataAccessor = daField.getText();
-            connection.guiHome = homeField.getText();
-            connection.savePreferences();
+//            connection.guiUser = userField.getText();
+//            connection.guiPassword = passwordField.getText();
+//            connection.guiUserBase = userBaseField.getText();
+//            connection.guiUrl = urlField.getText();
+//            connection.guiDataAccessor = daField.getText();
+//            connection.guiHome = homeField.getText();
+//            connection.savePreferences();
             saveButton.setEnabled(false);
             resetButton.setEnabled(false);
             preferencesButton.setEnabled(false);
@@ -543,7 +554,7 @@ public class AsConnectionPanel extends JPanel implements ActionListener, Documen
         if(src == resetButton)
         {
             resetButton.setEnabled(false);
-            preferencesButton.setEnabled(connection.modified);
+//            preferencesButton.setEnabled(connection.modified);
             defaultButton.setEnabled(true);
             adjustForSelection();
             return;
@@ -554,13 +565,13 @@ public class AsConnectionPanel extends JPanel implements ActionListener, Documen
             resetButton.setEnabled(true);
             preferencesButton.setEnabled(true);
             defaultButton.setEnabled(false);
-            userField.setText(connection.defaultUser);
-            passwordField.setText(connection.defaultPassword);
-            userBaseField.setText(connection.defaultUserBase);
-            urlField.setText(connection.defaultUrl);
-            daField.setText(connection.defaultDataAccessor);
-            homeField.setText(connection.defaultHome);
-            dbAdmin.swapAndSetFocus(this, userField);
+//            userField.setText(connection.defaultUser);
+//            passwordField.setText(connection.defaultPassword);
+//            userBaseField.setText(connection.defaultUserBase);
+//            urlField.setText(connection.defaultUrl);
+//            daField.setText(connection.defaultDataAccessor);
+//            homeField.setText(connection.defaultHome);
+            wholej.swapAndSetFocus(this, userField);
             return;
         }
         if(src == preferencesButton)
@@ -569,13 +580,13 @@ public class AsConnectionPanel extends JPanel implements ActionListener, Documen
             resetButton.setEnabled(true);
             preferencesButton.setEnabled(false);
             defaultButton.setEnabled(true);
-            userField.setText(connection.prefUser);
-            passwordField.setText(connection.prefPassword);
-            userBaseField.setText(connection.prefUserBase);
-            urlField.setText(connection.prefUrl);
-            daField.setText(connection.prefDataAccessor);
-            homeField.setText(connection.prefHome);
-            dbAdmin.swapAndSetFocus(this, userField);
+//            userField.setText(connection.prefUser);
+//            passwordField.setText(connection.prefPassword);
+//            userBaseField.setText(connection.prefUserBase);
+//            urlField.setText(connection.prefUrl);
+//            daField.setText(connection.prefDataAccessor);
+//            homeField.setText(connection.prefHome);
+            wholej.swapAndSetFocus(this, userField);
             return;
         }
     }
@@ -587,13 +598,13 @@ public class AsConnectionPanel extends JPanel implements ActionListener, Documen
             return;
         saveButton.setEnabled(true);
         preferencesButton.setEnabled(true);
-        connection.modified = true;
-        connection.guiUser = userField.getText();
-        connection.guiPassword = passwordField.getText();
-        connection.guiUserBase = userBaseField.getText();
-        connection.guiUrl = urlField.getText();
-        connection.guiDataAccessor = daField.getText();
-        connection.guiHome = homeField.getText();
+//        connection.modified = true;
+//        connection.guiUser = userField.getText();
+//        connection.guiPassword = passwordField.getText();
+//        connection.guiUserBase = userBaseField.getText();
+//        connection.guiUrl = urlField.getText();
+//        connection.guiDataAccessor = daField.getText();
+//        connection.guiHome = homeField.getText();
     }
     @Override public void insertUpdate(DocumentEvent e){changedUpdate(null);}
     @Override public void removeUpdate(DocumentEvent e){changedUpdate(null);}
