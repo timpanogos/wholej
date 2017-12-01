@@ -159,14 +159,14 @@ public class WholejData
         private long gg;
     }
 
-    private enum MaxJumpMass
+    public enum MaxJumpMass
     {
         Five(5), Twenty(20), OneK(1000), OneThreeFifty(1350), OneEight(1800), ThreeH(300);
         MaxJumpMass(long gg)
         {
             this.gg = gg;
         }
-        private long getMass() { return gg * 1000000; }
+        public long getMass() { return gg * 1000000; }
         private long gg;
     }
 
@@ -258,13 +258,36 @@ public class WholejData
                 getNormalizedMass(top) + ")";
         }
 
-        public long getMassDown()
+        public long getMassDownLow()
         {
             long mass = maxStableMass.getMass();
             long err = mass / 10;
             long bottom = mass - err;
-            bottom /= 2;
-            return bottom;
+            return bottom / 2;
+        }
+
+        public long getMassDownHigh()
+        {
+            long mass = maxStableMass.getMass();
+            long err = mass / 10;
+            long top = mass + err;
+            return top / 2;
+        }
+
+        public long getMassCritLow()
+        {
+            long mass = maxStableMass.getMass();
+            long err = mass / 10;
+            long bottom = mass - err;
+            return bottom / 10;
+        }
+
+        public long getMassCritHigh()
+        {
+            long mass = maxStableMass.getMass();
+            long err = mass / 10;
+            long top = mass + err;
+            return top / 10;
         }
 
         public String getMassDownRange()

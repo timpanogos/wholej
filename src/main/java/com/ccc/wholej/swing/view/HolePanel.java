@@ -28,26 +28,12 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-//import org.emitdo.research.app.dbAdmin.ConnectionControl;
 import com.ccc.tools.app.swing.FrameBase;
 import com.ccc.tools.app.swing.SwappedFocusListener;
 import com.ccc.wholej.WholejData;
 import com.ccc.wholej.swing.Wholej;
-import com.ccc.wholej.swing.Wholej.ConnType;
 import com.ccc.wholej.swing.Wholej.DomainType;
 import com.ccc.wholej.swing.Wholej.VendorType;
-//import org.emitdo.research.app.dbAdmin.model.ConnectionData;
-//import org.emitdo.research.app.swing.FrameBase;
-//import org.emitdo.research.app.swing.SwappedFocusListener;
-
-//    public enum BattleShip
-//    {
-//        Apocalypse(97100000), Armageddon(105200000), Abaddon(103200000),    // ammar
-//        Scorpion(103600000), Rokh(105300000), Raven(99300000),              // caldari
-//        Megathron(98400000), Dominix(100250000), Hyperion(100200000),       // gallente
-//        Typhoon(100600000), Maelstrom(103600000), Tempest(99500000);        // minmatar
-
-
 
 public class HolePanel extends JPanel implements ActionListener, DocumentListener, SwappedFocusListener, WindowFocusListener, KeyListener
 {
@@ -88,6 +74,7 @@ public class HolePanel extends JPanel implements ActionListener, DocumentListene
     private JTextField whMassCriticalField;
     private JTextField whMassLeftField;
     private JTextField suggestedMovesField;
+    private JTextField nextMassField;
     private JTextField whLifeField;
 
     private JButton submitButton;
@@ -97,8 +84,10 @@ public class HolePanel extends JPanel implements ActionListener, DocumentListene
     private transient WholejData.BattleShip selectedBs;
     private transient MassModifier selectedMassModifier;
     private final AtomicLong massDownMass;
+    private transient WholejData.HoleInfo selectedHoleInfo;
 
     private final AtomicLong massRemaining;
+    private final AtomicInteger jumpCount;
     private final AtomicBoolean painted;
     
     public HolePanel(Wholej wholej)
@@ -107,7 +96,8 @@ public class HolePanel extends JPanel implements ActionListener, DocumentListene
         painted = new AtomicBoolean(false);
         massRemaining = new AtomicLong();
         massDownMass = new AtomicLong();
-        
+        jumpCount = new AtomicInteger();
+
         setLayout(new BorderLayout());
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -159,6 +149,7 @@ public class HolePanel extends JPanel implements ActionListener, DocumentListene
         JLabel whMassCritLabel = FrameBase.getLabel("Mass critical:", maxWidth);
         JLabel whMassLeftLabel = FrameBase.getLabel("Mass remaining:", maxWidth);
         JLabel whSuggestedLabel = FrameBase.getLabel("Suggested: ", maxWidth);
+        JLabel whNextMassLabel = FrameBase.getLabel("Next jump mass: ", maxWidth);
         JLabel whLifeLabel = FrameBase.getLabel("Max Life:", maxWidth);
         int whStatsWidth = maxWidth.get();
 
@@ -255,6 +246,9 @@ public class HolePanel extends JPanel implements ActionListener, DocumentListene
         suggestedMovesField = new JTextField("", numberOfColumns);
         suggestedMovesField.setEditable(false);
         FrameBase.addTextParamToPanel(whSuggestedLabel, suggestedMovesField, whStatsWidth, -1, "The suggested mass modifier jumps to make", mainPanel);
+        nextMassField = new JTextField("", numberOfColumns);
+        nextMassField.setEditable(false);
+        FrameBase.addTextParamToPanel(whNextMassLabel, nextMassField, whStatsWidth, -1, "The next jump mass", mainPanel);
 
         whClassField = new JTextField("", numberOfColumns);
         whClassField.setEditable(false);
@@ -343,7 +337,7 @@ public class HolePanel extends JPanel implements ActionListener, DocumentListene
         if(apocalypseRadio.isSelected())
             setSelectedBs(WholejData.BattleShip.Apocalypse);
         else if(armageddonRadio.isSelected())
-            setSelectedBs(WholejData.BattleShip.Apocalypse);
+            setSelectedBs(WholejData.BattleShip.Armageddon);
         else if(rokhRadio.isSelected())
             setSelectedBs(WholejData.BattleShip.Rokh);
         else if(ravenRadio.isSelected())
@@ -365,34 +359,20 @@ public class HolePanel extends JPanel implements ActionListener, DocumentListene
         else if(tempestRadio.isSelected())
             setSelectedBs(WholejData.BattleShip.Tempest);
 
-
         if(lightRadio.isSelected())
-        {
             selectedMassModifier = MassModifier.Light;
-            return;
-        }
-        if(heavyRadio.isSelected())
-        {
+        else if(heavyRadio.isSelected())
             selectedMassModifier = MassModifier.Heavy;
-            return;
-        }
-        if(higgsLightRadio.isSelected())
-        {
+        else if(higgsLightRadio.isSelected())
             selectedMassModifier = MassModifier.HiggsLight;
-            return;
-        }
-        if(higgsHeavyRadio.isSelected())
-        {
+        else if(higgsHeavyRadio.isSelected())
             selectedMassModifier = MassModifier.HiggsHeavy;
-            return;
-        }
+        setMassRemaining(false);
 
         painted.set(false);
         setState();
         wholej.swapAndSetFocus(this, wormholeTypeField);
         wormholeTypeField.setEnabled(true);
-//        jumpButton.setEnabled(false);
-//        submitButton.setEnabled(false);
     }
 
     private void setSelectedBs(WholejData.BattleShip bs)
@@ -426,45 +406,121 @@ public class HolePanel extends JPanel implements ActionListener, DocumentListene
             }
             whClassField.setText(info.type.getClassName());
             whMaxPossibleMassField.setText(info.getTotalMassRange());
-            whMaxJumpMassField.setText(info.getMaxJumpMass());
+            long whMaxJumpMass = info.maxJumpMass.getMass();
+            String whMaxJumpMassStr = info.getMaxJumpMass();
+            boolean notFrigHole = true;
+            if(whMaxJumpMass < selectedMassModifier.getMass(selectedBs)) {
+                whMaxJumpMassStr += "    Battleships are too large for this hole";
+                notFrigHole = false;
+            }
+            whMaxJumpMassField.setText(whMaxJumpMassStr);
+
             whMassDownField.setText(info.getMassDownRange());
-            massDownMass.set(info.getMassDown());
+            massDownMass.set(info.getMassDownLow());
             whMassCriticalField.setText(info.getMassCriticalRange());
             massRemaining.set(info.maxStableMass.getMass());
-            whMassLeftField.setText(WholejData.HoleInfo.getNormalizedMass(massRemaining.get()));
             whLifeField.setText(info.maxStableTime.getHours());
+            selectedHoleInfo = info;
+            setMassRemaining(false);
             submitButton.setEnabled(false);
-            jumpButton.setEnabled(true);
+            jumpButton.setEnabled(notFrigHole);
+            jumpCount.set(0);
             return;
         }
         if(src == jumpButton)
         {
             long mass = selectedMassModifier.getMass(selectedBs);
-            long previousMass = massRemaining.get();
-            mass = previousMass - mass;
-            massRemaining.set(mass);
-            whMassLeftField.setText(WholejData.HoleInfo.getNormalizedMass(mass));
+            setMassRemaining(true);
+            jumpCount.incrementAndGet();
             return;
         }
         if(src == massDownButton)
         {
             massRemaining.set(massDownMass.get());
-            whMassLeftField.setText(WholejData.HoleInfo.getNormalizedMass(massRemaining.get()));
+            setMassRemaining(false);
             return;
         }
     }
 
     private void setMassRemaining(boolean isJump)
     {
-        long mass = selectedMassModifier.getMass(selectedBs);
+        long bsJumpMass = selectedMassModifier.getMass(selectedBs);
+        String nextMassStr = WholejData.HoleInfo.getNormalizedMass(bsJumpMass);
+        if(selectedHoleInfo != null)
+        {
+            long whJumpMass = selectedHoleInfo.maxJumpMass.getMass();
+            if(bsJumpMass > whJumpMass)
+                nextMassStr += "     Will not fit";
+        }
+        nextMassField.setText(nextMassStr);
+
         long previousMass = massRemaining.get();
+        long nextMass = previousMass;
         if(isJump)
         {
-            mass = previousMass - mass;
-            massRemaining.set(mass);
+            nextMass = previousMass - bsJumpMass;
+            massRemaining.set(nextMass);
         }
-        whMassLeftField.setText(WholejData.HoleInfo.getNormalizedMass(mass));
+        String nextMassDesc = "";
+        if(selectedHoleInfo != null) {
+            long massDownHigh = selectedHoleInfo.getMassDownHigh();
+            long massDownLow = selectedHoleInfo.getMassDownLow();
+            long massCritHigh = selectedHoleInfo.getMassCritHigh();
+            long massCritLow = selectedHoleInfo.getMassCritLow();
 
+            nextMassDesc = " > than mass down high";
+            if (nextMass < massDownHigh) {
+                if (nextMass > massDownLow)
+                    nextMassDesc = " > mass down low < mass down high";
+                else if (nextMass > massCritHigh)
+                    nextMassDesc = " > mass critical high < mass down low";
+                else if (nextMass > massCritLow)
+                    nextMassDesc = " > critical low < critical high";
+                else
+                    nextMassDesc = " < critical low";
+            }
+        }
+        whMassLeftField.setText(WholejData.HoleInfo.getNormalizedMass(nextMass) + nextMassDesc);
+
+        long lightMass = selectedBs.getLight();
+        long heavyMass = selectedBs.getHeavy();
+        long higgsLightMass = selectedBs.getHiggsLight();
+        long higgsHeavyMass = selectedBs.getHiggsHeavy();
+        long higgsHeavyCount = nextMass / higgsHeavyMass;
+        long higgsLightCount = 0;
+        long heavyCount = 0;
+        long lightCount = 0;
+        if(higgsHeavyCount > 0)
+        {
+            long remainder = nextMass - (higgsHeavyMass * higgsHeavyCount);
+            if(remainder > higgsLightMass)
+            {
+                higgsLightCount = remainder / higgsLightMass;
+                remainder = remainder - (higgsLightMass * higgsLightCount);
+            }
+            if(remainder > heavyMass)
+            {
+                heavyCount = remainder / heavyMass;
+                remainder = remainder - (heavyMass * heavyCount);
+            }
+            if(remainder > lightMass)
+            {
+                lightCount = remainder / lightMass;
+                remainder = remainder - (lightMass * lightCount);
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        if(higgsHeavyCount > 0)
+            sb.append(higgsHeavyCount).append(" higgs heavy, ");
+        if(higgsLightCount > 0)
+            sb.append(higgsLightCount).append(" higgs light, ");
+        if(heavyCount > 0)
+            sb.append(heavyCount).append(" heavy, ");
+        if(lightCount > 0)
+            sb.append(lightCount).append(" light, ");
+        if(sb.length() == 0)
+            sb.append("STOP");
+        suggestedMovesField.setText(sb.toString());
     }
     
     @Override
