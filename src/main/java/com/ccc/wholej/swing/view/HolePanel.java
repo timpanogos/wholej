@@ -3,15 +3,16 @@
  */
 package com.ccc.wholej.swing.view;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -30,6 +31,7 @@ import javax.swing.event.DocumentListener;
 //import org.emitdo.research.app.dbAdmin.ConnectionControl;
 import com.ccc.tools.app.swing.FrameBase;
 import com.ccc.tools.app.swing.SwappedFocusListener;
+import com.ccc.wholej.WholejData;
 import com.ccc.wholej.swing.Wholej;
 import com.ccc.wholej.swing.Wholej.ConnType;
 import com.ccc.wholej.swing.Wholej.DomainType;
@@ -38,78 +40,6 @@ import com.ccc.wholej.swing.Wholej.VendorType;
 //import org.emitdo.research.app.swing.FrameBase;
 //import org.emitdo.research.app.swing.SwappedFocusListener;
 
-public class HolePanel extends JPanel implements ActionListener, DocumentListener, SwappedFocusListener, WindowFocusListener
-{
-    private final int numberOfColumns = 52;
-    private final Wholej wholej;
-//    private final ConnectionControl control;
-//    private ConnectionData connection;
-
-
-    private JRadioButton apocalypseRadio;
-    private JRadioButton armageddonRadio;
-    private JRadioButton abaddonRadio;
-    private JRadioButton scorpionRadio;
-    private JRadioButton rokhRadio;
-    private JRadioButton ravenRadio;
-    
-    private JRadioButton megathronRadio;
-    private JRadioButton dominixRadio;
-    private JRadioButton hyperionRadio;
-    private JRadioButton typhoonRadio;
-    private JRadioButton maelstromRadio;
-    private JRadioButton tempestRadio;
-    private JRadioButton pgFactoryRadio;
-    private JRadioButton pgBatteryRadio;
-    private JRadioButton pgAncillaryRadio;
-    
-    private JCheckBox oracleClusterCheck;
-    private JCheckBox oracleResCheck;
-    private JCheckBox oracleBatteryCheck;
-    private JCheckBox oracleAncillaryCheck;
-    private JCheckBox oracleFactoryCheck;
-    private JCheckBox oracleRgCheck;
-    private JCheckBox jdbClusterCheck;
-    private JCheckBox jdbResCheck;
-    private JCheckBox jdbFactoryCheck;
-    private JCheckBox jdbRgCheck;
-    private JCheckBox pgClusterCheck;
-    private JCheckBox pgResCheck;
-    private JCheckBox pgBatteryCheck;
-    private JCheckBox pgAncillaryCheck;
-    private JCheckBox pgFactoryCheck;
-    
-    private JRadioButton jdbcRadio;
-    private JRadioButton webRadio;
-    
-    private JTextField userField;
-    private JTextField passwordField;
-    private JTextField userBaseField;
-    private JTextField urlField;
-    private JTextField daField;
-    private JTextField homeField;
-    
-    private JButton saveButton;
-    private JButton resetButton;
-    private JButton preferencesButton;
-    private JButton defaultButton;
-    
-    private final AtomicBoolean painted;
-    
-    public HolePanel(Wholej wholej)
-    {
-        this.wholej = wholej;
-//        control = wholej.getConnectionControl();
-        painted = new AtomicBoolean(false);
-        
-        setLayout(new BorderLayout());
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(new TitledBorder("AS Connections"));
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(new TitledBorder("Oracle Connections"));
 //    public enum BattleShip
 //    {
 //        Apocalypse(97100000), Armageddon(105200000), Abaddon(103200000),    // ammar
@@ -118,226 +48,238 @@ public class HolePanel extends JPanel implements ActionListener, DocumentListene
 //        Typhoon(100600000), Maelstrom(103600000), Tempest(99500000);        // minmatar
 
 
+
+public class HolePanel extends JPanel implements ActionListener, DocumentListener, SwappedFocusListener, WindowFocusListener, KeyListener
+{
+    private final int numberOfColumns = 10;
+    private final Wholej wholej;
+
+    private JRadioButton apocalypseRadio;
+    private JRadioButton armageddonRadio;
+    private JRadioButton abaddonRadio;
+
+    private JRadioButton scorpionRadio;
+    private JRadioButton rokhRadio;
+    private JRadioButton ravenRadio;
+    
+    private JRadioButton megathronRadio;
+    private JRadioButton dominixRadio;
+    private JRadioButton hyperionRadio;
+
+    private JRadioButton typhoonRadio;
+    private JRadioButton maelstromRadio;
+    private JRadioButton tempestRadio;
+
+    private JRadioButton lightRadio;
+    private JRadioButton heavyRadio;
+    private JRadioButton higgsLightRadio;
+    private JRadioButton higgsHeavyRadio;
+
+    private JTextField wormholeTypeField;
+    private JTextField bsLightMassField;
+    private JTextField bsHeavyMassField;
+    private JTextField bsHiggsLightMassField;
+    private JTextField bsHigssHeavyMassField;
+
+    private JTextField whClassField;
+    private JTextField whMaxPossibleMassField;
+    private JTextField whMaxJumpMassField;
+    private JTextField whMassDownField;
+    private JTextField whMassCriticalField;
+    private JTextField whMassLeftField;
+    private JTextField suggestedMovesField;
+    private JTextField whLifeField;
+
+    private JButton submitButton;
+    private JButton massDownButton;
+    private JButton jumpButton;
+
+    private transient WholejData.BattleShip selectedBs;
+    private transient MassModifier selectedMassModifier;
+    private final AtomicLong massDownMass;
+
+    private final AtomicLong massRemaining;
+    private final AtomicBoolean painted;
+    
+    public HolePanel(Wholej wholej)
+    {
+        this.wholej = wholej;
+        painted = new AtomicBoolean(false);
+        massRemaining = new AtomicLong();
+        massDownMass = new AtomicLong();
+        
+        setLayout(new BorderLayout());
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(new TitledBorder("Crush Statistics"));
+
+        JPanel bsPanel = new JPanel();
+        bsPanel.setLayout(new BoxLayout(bsPanel, BoxLayout.Y_AXIS));
+        bsPanel.setBorder(new TitledBorder("Battleships"));
+
         AtomicInteger maxWidth = new AtomicInteger();
-        JLabel apocalypseLabel = FrameBase.getLabel("Cluster:", maxWidth);
-        JLabel armageddonLabel = FrameBase.getLabel("Res:", maxWidth);
-        JLabel abaddonLabel = FrameBase.getLabel("Battery:", maxWidth);
-        JLabel scorpionLabel = FrameBase.getLabel("Ancillary:", maxWidth);
-        JLabel rokhLabel = FrameBase.getLabel("Factory:", maxWidth);
-        JLabel ravenLabel = FrameBase.getLabel("Res Gateway:", maxWidth);
-        JLabel megathronLabel = FrameBase.getLabel("Cluster:", maxWidth);
-        JLabel dominixLabel = FrameBase.getLabel("Res:", maxWidth);
-        JLabel hyperionLabel = FrameBase.getLabel("Factory:", maxWidth);
-        JLabel typhoonLabel = FrameBase.getLabel("Res Gateway:", maxWidth);
-        JLabel maelstromLabel = FrameBase.getLabel("Cluster:", maxWidth);
-        JLabel tempestLabel = FrameBase.getLabel("Res:", maxWidth);
-        JLabel pgBatteryLabel = FrameBase.getLabel("Battery:", maxWidth);
-        JLabel pgAncillaryLabel = FrameBase.getLabel("Ancillary:", maxWidth);
-        JLabel pgFactoryLabel = FrameBase.getLabel("Factory:", maxWidth);
-        
-        JLabel oracleClusterConnectedLabel = FrameBase.getLabel("Connected:", maxWidth);
-        JLabel oracleResConnectedLabel = FrameBase.getLabel("Connected:", maxWidth);
-        JLabel oracleBatteryConnectedLabel = FrameBase.getLabel("Connected:", maxWidth);
-        JLabel oracleAncillaryConnectedLabel = FrameBase.getLabel("Connected:", maxWidth);
-        JLabel oracleFactoryConnectedLabel = FrameBase.getLabel("Connected:", maxWidth);
-        JLabel oracleRgConnectedLabel = FrameBase.getLabel("Connected:", maxWidth);
-        JLabel jdbClusterConnectedLabel = FrameBase.getLabel("Connected:", maxWidth);
-        JLabel jdbResConnectedLabel = FrameBase.getLabel("Connected:", maxWidth);
-        JLabel jdbFactoryConnectedLabel = FrameBase.getLabel("Connected:", maxWidth);
-        JLabel jdbRgConnectedLabel = FrameBase.getLabel("Connected:", maxWidth);
-        JLabel pgClusterConnectedLabel = FrameBase.getLabel("Connected:", maxWidth);
-        JLabel pgResConnectedLabel = FrameBase.getLabel("Connected:", maxWidth);
-        JLabel pgBatteryConnectedLabel = FrameBase.getLabel("Connected:", maxWidth);
-        JLabel pgAncillaryConnectedLabel = FrameBase.getLabel("Connected:", maxWidth);
-        JLabel pgFactoryConnectedLabel = FrameBase.getLabel("Connected:", maxWidth);
-                
-        JLabel jdbcLabel = FrameBase.getLabel("JDBC:", maxWidth);
-        JLabel webLabel = FrameBase.getLabel("Web:", maxWidth);
-        
-        JLabel userLabel = FrameBase.getLabel("User:", maxWidth);
-        JLabel userBaseLabel = FrameBase.getLabel("Base user:", maxWidth);
-        JLabel passwordLabel = FrameBase.getLabel("Password:", maxWidth);
-        JLabel urlLabel = FrameBase.getLabel("URL:", maxWidth);
-        JLabel daLabel = FrameBase.getLabel("Data accessor:", maxWidth);
-        JLabel homeLabel = FrameBase.getLabel("Home:", maxWidth);
-        int width = maxWidth.get();
-        
+        JLabel apocalypseLabel = FrameBase.getLabel(WholejData.BattleShip.Apocalypse.name() + ":", maxWidth);
+        JLabel armageddonLabel = FrameBase.getLabel(WholejData.BattleShip.Armageddon.name() + ":", maxWidth);
+        JLabel abaddonLabel = FrameBase.getLabel(WholejData.BattleShip.Abaddon.name() + ":", maxWidth);
+
+        JLabel scorpionLabel = FrameBase.getLabel(WholejData.BattleShip.Scorpion.name() + ":", maxWidth);
+        JLabel rokhLabel = FrameBase.getLabel(WholejData.BattleShip.Rokh.name() + ":", maxWidth);
+        JLabel ravenLabel = FrameBase.getLabel(WholejData.BattleShip.Raven.name() + ":", maxWidth);
+        JLabel megathronLabel = FrameBase.getLabel(WholejData.BattleShip.Megathron.name() + ":", maxWidth);
+        JLabel dominixLabel = FrameBase.getLabel(WholejData.BattleShip.Dominix.name() + ":", maxWidth);
+        JLabel hyperionLabel = FrameBase.getLabel(WholejData.BattleShip.Hyperion.name() + ":", maxWidth);
+        JLabel typhoonLabel = FrameBase.getLabel(WholejData.BattleShip.Typhoon.name() + ":", maxWidth);
+        JLabel maelstromLabel = FrameBase.getLabel(WholejData.BattleShip.Maelstrom.name() + ":", maxWidth);
+        JLabel tempestLabel = FrameBase.getLabel(WholejData.BattleShip.Tempest.name() + ":", maxWidth);
+        int bsNameWidth = maxWidth.get();
+        maxWidth.set(0);
+
+        JLabel lightLabel = FrameBase.getLabel("Light:", maxWidth);
+        JLabel heavyLabel = FrameBase.getLabel("Heavy:", maxWidth);
+        JLabel higgsLightLabel = FrameBase.getLabel("Higgs Light:", maxWidth);
+        JLabel higgsHeavyLabel = FrameBase.getLabel("Higgs Heavy:", maxWidth);
+        int massModWidth = maxWidth.get();
+        maxWidth.set(0);
+
+        JLabel bsLightLabel = FrameBase.getLabel("Light mass:", maxWidth);
+        JLabel bsHeavyLabel = FrameBase.getLabel("Heavy mass:", maxWidth);
+        JLabel bsHiggsLightLabel = FrameBase.getLabel("Higgs light mass:", maxWidth);
+        JLabel bsHiggsHeavyLabel = FrameBase.getLabel("Higgs heavy mass:", maxWidth);
+        int bsStatsWidth = maxWidth.get();
+        maxWidth.set(0);
+
+        JLabel wormholeTypeLabel = FrameBase.getLabel("Wormhole Type:", maxWidth);
+        int whTypeWidth = maxWidth.get();
+        maxWidth.set(0);
+
+        JLabel whClassLabel = FrameBase.getLabel("Class:", maxWidth);
+        JLabel whMaxMassLabel = FrameBase.getLabel("Max Possible Mass:", maxWidth);
+        JLabel whMaxJumpMassLabel = FrameBase.getLabel("Max Jump Mass:", maxWidth);
+        JLabel whMassDownLabel = FrameBase.getLabel("Mass down:", maxWidth);
+        JLabel whMassCritLabel = FrameBase.getLabel("Mass critical:", maxWidth);
+        JLabel whMassLeftLabel = FrameBase.getLabel("Mass remaining:", maxWidth);
+        JLabel whSuggestedLabel = FrameBase.getLabel("Suggested: ", maxWidth);
+        JLabel whLifeLabel = FrameBase.getLabel("Max Life:", maxWidth);
+        int whStatsWidth = maxWidth.get();
+
         JPanel rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-//        apocalypseRadio = FrameBase.addRadioButtonToPanel(apocalypseLabel, true, true, width, -1, "Oracle Cluster DB connection", rowPanel, this);
+        rowPanel.setBorder(new TitledBorder("Amarr"));
+        apocalypseRadio = FrameBase.addRadioButtonToPanel(apocalypseLabel, false, true, bsNameWidth, "Amarr Apocalypse Battleship", rowPanel, this);
+        armageddonRadio = FrameBase.addRadioButtonToPanel(armageddonLabel, false, true, bsNameWidth, "Amarr Apocalypse Battleship", rowPanel, this);
+        abaddonRadio = FrameBase.addRadioButtonToPanel(abaddonLabel, false, true, bsNameWidth, "Amarr Apocalypse Battleship", rowPanel, this);
+        bsPanel.add(rowPanel);
 
-//        oracleClusterCheck = FrameBase.addCheckBoxToPanel(oracleClusterConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Cluster, VendorType.Oracle, apocalypseRadio, oracleClusterCheck);
-        panel.add(rowPanel);
+        rowPanel = new JPanel();
+        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
+        rowPanel.setBorder(new TitledBorder("Caldari"));
+        scorpionRadio = FrameBase.addRadioButtonToPanel(scorpionLabel, false, true, bsNameWidth,  "Caldari Scorpion Battleship", rowPanel, this);
+        rokhRadio = FrameBase.addRadioButtonToPanel(rokhLabel, false, true, bsNameWidth,  "Caldari Rokh Battleship", rowPanel, this);
+        ravenRadio = FrameBase.addRadioButtonToPanel(ravenLabel, false, true, bsNameWidth, "Caldari Raven Battleship", rowPanel, this);
+        bsPanel.add(rowPanel);
         
         rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-//        armageddonRadio = FrameBase.addRadioButtonToPanel(armageddonLabel, false, true, width, -1, "Oracle Res DB connection", rowPanel, this);
-//        oracleResCheck = FrameBase.addCheckBoxToPanel(oracleResConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Res, VendorType.Oracle, armageddonRadio, oracleResCheck);
-        panel.add(rowPanel);
+        rowPanel.setBorder(new TitledBorder("Gallente"));
+        megathronRadio = FrameBase.addRadioButtonToPanel(megathronLabel, false, true, bsNameWidth, "Gallente Megathron Battleship", rowPanel, this);
+        dominixRadio = FrameBase.addRadioButtonToPanel(dominixLabel, true, true, bsNameWidth, "Gallente Dominix Battleship", rowPanel, this);
+        hyperionRadio = FrameBase.addRadioButtonToPanel(hyperionLabel, false, true, bsNameWidth, "Gallente Hyperion Battleship", rowPanel, this);
+        bsPanel.add(rowPanel);
         
         rowPanel = new JPanel();
         rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-//        rokhRadio = FrameBase.addRadioButtonToPanel(abaddonLabel, false, true, width, -1, "Oracle Battery DB connection", rowPanel, this);
-//        oracleBatteryCheck = FrameBase.addCheckBoxToPanel(oracleBatteryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Battery, VendorType.Oracle, rokhRadio, oracleBatteryCheck);
-        panel.add(rowPanel);
-        
-        rowPanel = new JPanel();
-        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-//        ravenRadio = FrameBase.addRadioButtonToPanel(scorpionLabel, false, true, width, -1, "Oracle Ancillary DB connection", rowPanel, this);
-//        oracleAncillaryCheck = FrameBase.addCheckBoxToPanel(oracleAncillaryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Ancillary, VendorType.Oracle, ravenRadio, oracleAncillaryCheck);
-        panel.add(rowPanel);
-        
-        rowPanel = new JPanel();
-        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-//        abaddonRadio = FrameBase.addRadioButtonToPanel(rokhLabel, false, true, width, -1, "Oracle Factory DB connection", rowPanel, this);
-//        oracleFactoryCheck = FrameBase.addCheckBoxToPanel(oracleFactoryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Factory, VendorType.Oracle, abaddonRadio, oracleFactoryCheck);
-        panel.add(rowPanel);
-        
-        rowPanel = new JPanel();
-        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-//        scorpionRadio = FrameBase.addRadioButtonToPanel(ravenLabel, false, true, width, -1, "Oracle Residential Gateway DB connection", rowPanel, this);
-//        oracleRgCheck = FrameBase.addCheckBoxToPanel(oracleRgConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Rg, VendorType.Oracle, scorpionRadio, oracleRgCheck);
-        panel.add(rowPanel);
-        
+        rowPanel.setBorder(new TitledBorder("Minmatar"));
+        typhoonRadio = FrameBase.addRadioButtonToPanel(typhoonLabel, false, true, bsNameWidth, "Minmatar Typhoon Battleship", rowPanel, this);
+        maelstromRadio = FrameBase.addRadioButtonToPanel(maelstromLabel, false, true, bsNameWidth, "Minmatar Maelstrom Battleship", rowPanel, this);
+        tempestRadio = FrameBase.addRadioButtonToPanel(tempestLabel, false, true, bsNameWidth, "Minmatar Typhoon Battleship", rowPanel, this);
+        bsPanel.add(rowPanel);
+
         ButtonGroup group = new ButtonGroup();
         group.add(apocalypseRadio);
         group.add(armageddonRadio);
-        group.add(rokhRadio);
-        group.add(ravenRadio);
         group.add(abaddonRadio);
         group.add(scorpionRadio);
-
-        mainPanel.add(panel);
-        
-        panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(new TitledBorder("JavaDB Connections"));
-        
-        rowPanel = new JPanel();
-        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-//        megathronRadio = FrameBase.addRadioButtonToPanel(megathronLabel, false, true, width, -1, "JavaDB Cluster DB connection", rowPanel, this);
-//        jdbClusterCheck = FrameBase.addCheckBoxToPanel(jdbClusterConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Cluster, VendorType.JavaDb, megathronRadio, jdbClusterCheck);
-        panel.add(rowPanel);
-        
-        rowPanel = new JPanel();
-        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-//        dominixRadio = FrameBase.addRadioButtonToPanel(dominixLabel, false, true, width, -1, "JavaDB Res DB connection", rowPanel, this);
-//        jdbResCheck = FrameBase.addCheckBoxToPanel(jdbResConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Res, VendorType.JavaDb, dominixRadio, jdbResCheck);
-        panel.add(rowPanel);
-        
-        rowPanel = new JPanel();
-        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-//        hyperionRadio = FrameBase.addRadioButtonToPanel(hyperionLabel, false, true, width, -1, "JavaDB Factory DB connection", rowPanel, this);
-//        jdbFactoryCheck = FrameBase.addCheckBoxToPanel(jdbFactoryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Factory, VendorType.JavaDb, hyperionRadio, jdbFactoryCheck);
-        panel.add(rowPanel);
-        
-        rowPanel = new JPanel();
-        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-//        typhoonRadio = FrameBase.addRadioButtonToPanel(typhoonLabel, false, true, width, -1, "JavaDB Residential Gateway DB connection", rowPanel, this);
-//        jdbRgCheck = FrameBase.addCheckBoxToPanel(jdbRgConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Rg, VendorType.JavaDb, typhoonRadio, jdbRgCheck);
-        panel.add(rowPanel);
-        
+        group.add(rokhRadio);
+        group.add(ravenRadio);
         group.add(megathronRadio);
-        group.add(dominixRadio);
         group.add(dominixRadio);
         group.add(hyperionRadio);
         group.add(typhoonRadio);
-        
-        mainPanel.add(panel);
-        
-        panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(new TitledBorder("Postgres Connections"));
-        
-        rowPanel = new JPanel();
-        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-//        maelstromRadio = FrameBase.addRadioButtonToPanel(maelstromLabel, false, true, width, -1, "Postgres Cluster DB connection", rowPanel, this);
-//        pgClusterCheck = FrameBase.addCheckBoxToPanel(pgClusterConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Cluster, VendorType.Postgres, maelstromRadio, pgClusterCheck);
-        panel.add(rowPanel);
-        
-        rowPanel = new JPanel();
-        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-//        tempestRadio = FrameBase.addRadioButtonToPanel(tempestLabel, false, true, width, -1, "Postgres Res DB connection", rowPanel, this);
-//        pgResCheck = FrameBase.addCheckBoxToPanel(pgResConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Res, VendorType.Postgres, tempestRadio, pgResCheck);
-        panel.add(rowPanel);
-        
-        rowPanel = new JPanel();
-        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-//        pgBatteryRadio = FrameBase.addRadioButtonToPanel(pgBatteryLabel, false, true, width, -1, "Postgres Battery DB connection", rowPanel, this);
-//        pgBatteryCheck = FrameBase.addCheckBoxToPanel(pgBatteryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Battery, VendorType.Postgres, pgBatteryRadio, pgBatteryCheck);
-        panel.add(rowPanel);
-        
-        rowPanel = new JPanel();
-        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-//        pgAncillaryRadio = FrameBase.addRadioButtonToPanel(pgAncillaryLabel, false, true, width, -1, "Postgres Ancillary DB connection", rowPanel, this);
-//        pgAncillaryCheck = FrameBase.addCheckBoxToPanel(pgAncillaryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Ancillary, VendorType.Postgres, pgAncillaryRadio, pgAncillaryCheck);
-        panel.add(rowPanel);
-        
-        rowPanel = new JPanel();
-        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
-//        pgFactoryRadio = FrameBase.addRadioButtonToPanel(pgFactoryLabel, false, true, width, -1, "Postgres Factory DB connection", rowPanel, this);
-//        pgFactoryCheck = FrameBase.addCheckBoxToPanel(pgFactoryConnectedLabel, false, false, width, -1, "Currently connected", rowPanel);
-        associateState(DomainType.Factory, VendorType.Postgres, pgFactoryRadio, pgFactoryCheck);
-        panel.add(rowPanel);
-        
         group.add(maelstromRadio);
         group.add(tempestRadio);
-        group.add(pgBatteryRadio);
-        group.add(pgAncillaryRadio);
-        group.add(pgFactoryRadio);
-        
-        mainPanel.add(panel);
-        
-        panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(new TitledBorder("Connectivity type"));
+        mainPanel.add(bsPanel);
 
-//        jdbcRadio = FrameBase.addRadioButtonToPanel(jdbcLabel, true, true, width, -1, "Use JDBC connectivity", panel, this);
-//        webRadio = FrameBase.addRadioButtonToPanel(webLabel, false, true, width, -1, "Use web services connectivity", panel, this);
+        JPanel bsStatsPanel = new JPanel();
+        bsStatsPanel.setLayout(new BoxLayout(bsStatsPanel, BoxLayout.Y_AXIS));
+        bsLightMassField = new JTextField("", numberOfColumns);
+        bsLightMassField.setEditable(false);
+        FrameBase.addTextParamToPanel(bsLightLabel, bsLightMassField, bsStatsWidth, -1, "Selected Battleship light mass", bsStatsPanel);
+        bsHeavyMassField = new JTextField("", numberOfColumns);
+        bsHeavyMassField.setEditable(false);
+        FrameBase.addTextParamToPanel(bsHeavyLabel, bsHeavyMassField, bsStatsWidth, -1, "Selected Battleship heavy mass", bsStatsPanel);
+        bsHiggsLightMassField = new JTextField("", numberOfColumns);
+        bsHiggsLightMassField.setEditable(false);
+        FrameBase.addTextParamToPanel(bsHiggsLightLabel, bsHiggsLightMassField, bsStatsWidth, -1, "Selected Battleship higgs light mass", bsStatsPanel);
+        bsHigssHeavyMassField = new JTextField("", numberOfColumns);
+        bsHigssHeavyMassField.setEditable(false);
+        FrameBase.addTextParamToPanel(bsHiggsHeavyLabel, bsHigssHeavyMassField, bsStatsWidth, -1, "Selected Battleship higgs heavy mass", bsStatsPanel);
+        mainPanel.add(bsStatsPanel);
+
+        JPanel massModPanel = new JPanel();
+        massModPanel.setLayout(new BoxLayout(massModPanel, BoxLayout.Y_AXIS));
+        massModPanel.setBorder(new TitledBorder("Jump mass modifiers"));
+
+        rowPanel = new JPanel();
+        rowPanel.setLayout(new BoxLayout(rowPanel, BoxLayout.X_AXIS));
+        higgsLightRadio = FrameBase.addRadioButtonToPanel(higgsLightLabel, true, true, massModWidth, "Battleship without higgs jumping light", rowPanel, this);
+        selectedMassModifier = MassModifier.HiggsLight;
+        higgsHeavyRadio = FrameBase.addRadioButtonToPanel(higgsHeavyLabel, false, true, massModWidth,  "Battleship without higgs jumping light", rowPanel, this);
+        lightRadio = FrameBase.addRadioButtonToPanel(lightLabel, false, true, massModWidth, "Battleship without higgs jumping light", rowPanel, this);
+        heavyRadio = FrameBase.addRadioButtonToPanel(heavyLabel, false, true, massModWidth, "Battleship without higgs jumping light", rowPanel, this);
+        massModPanel.add(rowPanel);
+
         group = new ButtonGroup();
-        group.add(jdbcRadio);
-        group.add(webRadio);
-        mainPanel.add(panel);
-        
-        panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(new TitledBorder("Connection information"));
-        
-        userField = new JTextField("", numberOfColumns);
-        FrameBase.addTextParamToPanel(userLabel, userField, width, -1, "Enter the connection user", panel, this);
-        passwordField = new JTextField("", numberOfColumns);
-        FrameBase.addTextParamToPanel(passwordLabel, passwordField, width, -1, "Enter the database users password", panel, this);
-        userBaseField = new JTextField("", numberOfColumns);
-        FrameBase.addTextParamToPanel(userBaseLabel, userBaseField, width, -1, "Enter the user base, _user, _manager, _admin will be created.", panel, this);
-        urlField = new JTextField("", numberOfColumns);
-        FrameBase.addTextParamToPanel(urlLabel, urlField, width, -1, "Enter the database URL", panel, this);
-        daField = new JTextField("", numberOfColumns);
-        FrameBase.addTextParamToPanel(daLabel, daField, width, -1, "Enter the Java Data Accessor class name for this connection", panel, this);
-        homeField = new JTextField("", numberOfColumns);
-        FrameBase.addTextParamToPanel(homeLabel, homeField, width, -1, "For Auto Create only, Enter the file system path where the JavaDB is to be created", panel, this);
-        mainPanel.add(panel);
-        
+        group.add(lightRadio);
+        group.add(heavyRadio);
+        group.add(higgsLightRadio);
+        group.add(higgsHeavyRadio);
+        mainPanel.add(massModPanel);
+
+        wormholeTypeField = new JTextField("", numberOfColumns);
+        wormholeTypeField.addKeyListener(this);
+        FrameBase.addTextParamToPanel(wormholeTypeLabel, wormholeTypeField, whTypeWidth, -1, "Enter the wormhole name/type", mainPanel, this);
+
+        whMassLeftField = new JTextField("", numberOfColumns);
+        whMassLeftField.setEditable(false);
+        FrameBase.addTextParamToPanel(whMassLeftLabel, whMassLeftField, whStatsWidth, -1, "The wormhole's estimated mass remaining", mainPanel);
+        suggestedMovesField = new JTextField("", numberOfColumns);
+        suggestedMovesField.setEditable(false);
+        FrameBase.addTextParamToPanel(whSuggestedLabel, suggestedMovesField, whStatsWidth, -1, "The suggested mass modifier jumps to make", mainPanel);
+
+        whClassField = new JTextField("", numberOfColumns);
+        whClassField.setEditable(false);
+        FrameBase.addTextParamToPanel(whClassLabel, whClassField, whStatsWidth, -1, "The wormhole's class", mainPanel);
+        whMaxPossibleMassField = new JTextField("", numberOfColumns);
+        whMaxPossibleMassField.setEditable(false);
+        FrameBase.addTextParamToPanel(whMaxMassLabel, whMaxPossibleMassField, whStatsWidth, -1, "The wormhole's maximum possible mass", mainPanel);
+        whMaxJumpMassField = new JTextField("", numberOfColumns);
+        whMaxJumpMassField.setEditable(false);
+        FrameBase.addTextParamToPanel(whMaxJumpMassLabel, whMaxJumpMassField, whStatsWidth, -1, "The wormhole's maximum per jump mass", mainPanel);
+        whMassDownField = new JTextField("", numberOfColumns);
+        whMassDownField.setEditable(false);
+        FrameBase.addTextParamToPanel(whMassDownLabel, whMassDownField, whStatsWidth, -1, "The wormhole's mass down range", mainPanel);
+        whMassCriticalField = new JTextField("", numberOfColumns);
+        whMassCriticalField.setEditable(false);
+        FrameBase.addTextParamToPanel(whMassCritLabel, whMassCriticalField, whStatsWidth, -1, "The wormhole's mass critical range", mainPanel);
+        whLifeField = new JTextField("", numberOfColumns);
+        whLifeField.setEditable(false);
+        FrameBase.addTextParamToPanel(whLifeLabel, whLifeField, whStatsWidth, -1, "The wormhole's maximum life in hours", mainPanel);
+
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(true);
-        saveButton = FrameBase.addButtonToPanel("Save", false, "Save the current values to user preferences", buttonPanel, this);
-        resetButton = FrameBase.addButtonToPanel("Reset", false, "Reset to the previous state", buttonPanel, this);
-        preferencesButton = FrameBase.addButtonToPanel("Preferences", false, "Set all fields to thier current preference values", buttonPanel, this);
-        defaultButton = FrameBase.addButtonToPanel("Default", false, "Set all fields to thier default values", buttonPanel, this);
-        
+        submitButton = FrameBase.addButtonToPanel("Submit", false, "Obtain the given Wormhole Type information", buttonPanel, this);
+        massDownButton = FrameBase.addButtonToPanel("Mass Down", true, "The wormhole is mass down", buttonPanel, this);
+        jumpButton = FrameBase.addButtonToPanel("Jump", false, "Recalculate stats based on a jump with the given mass modification option", buttonPanel, this);
         mainPanel.add(buttonPanel);
         
         JPanel dataPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -350,8 +292,7 @@ public class HolePanel extends JPanel implements ActionListener, DocumentListene
         add(scrollPane, BorderLayout.CENTER);
         setState();
         adjustForSelection();
-        
-        wholej.swapAndSetFocus(this, userField);
+        wholej.swapAndSetFocus(this, wormholeTypeField);
     }
 
     public void refresh()
@@ -378,155 +319,91 @@ public class HolePanel extends JPanel implements ActionListener, DocumentListene
     
     private void setState()
     {
-        for(int i=1; i < 5; i++)
-        {
-            DomainType dtype = DomainType.getType(i);
-            for(int j=0; j < 2; j++)
-            {
-                VendorType vtype = VendorType.JavaDb;
-                if(j == 1)
-                    vtype = VendorType.Oracle;
-                
-                ConnType ctype = ConnType.Jdbc;
-                if(!jdbcRadio.isSelected())
-                    ctype = ConnType.Web;
-//                ConnectionData ci = control.getConnection(StorageType.As, vtype, dtype, ctype);
-//                ci.checkBox.setSelected(ci.connected);
-//                ci.radioButton.setEnabled(ci.supported);
-            }
-        }
+//        for(int i=1; i < 5; i++)
+//        {
+//            DomainType dtype = DomainType.getType(i);
+//            for(int j=0; j < 2; j++)
+//            {
+//                VendorType vtype = VendorType.JavaDb;
+//                if(j == 1)
+//                    vtype = VendorType.Oracle;
+//
+//                ConnType ctype = ConnType.Jdbc;
+//                if(!jdbcRadio.isSelected())
+//                    ctype = ConnType.Web;
+////                ConnectionData ci = control.getConnection(StorageType.As, vtype, dtype, ctype);
+////                ci.checkBox.setSelected(ci.connected);
+////                ci.radioButton.setEnabled(ci.supported);
+//            }
+//        }
     }
     
     private void adjustForSelection()
     {
-        ConnType ctype = ConnType.Jdbc;
-        if(!jdbcRadio.isSelected())
-            ctype = ConnType.Web;
-        VendorType vtype = null;
-        DomainType dtype = null;
-        boolean jdb = false;
         if(apocalypseRadio.isSelected())
+            setSelectedBs(WholejData.BattleShip.Apocalypse);
+        else if(armageddonRadio.isSelected())
+            setSelectedBs(WholejData.BattleShip.Apocalypse);
+        else if(rokhRadio.isSelected())
+            setSelectedBs(WholejData.BattleShip.Rokh);
+        else if(ravenRadio.isSelected())
+            setSelectedBs(WholejData.BattleShip.Raven);
+        else if(abaddonRadio.isSelected())
+            setSelectedBs(WholejData.BattleShip.Abaddon);
+        else if(scorpionRadio.isSelected())
+            setSelectedBs(WholejData.BattleShip.Scorpion);
+        else if(megathronRadio.isSelected())
+            setSelectedBs(WholejData.BattleShip.Megathron);
+        else if(dominixRadio.isSelected())
+            setSelectedBs(WholejData.BattleShip.Dominix);
+        else if(hyperionRadio.isSelected())
+            setSelectedBs(WholejData.BattleShip.Hyperion);
+        else if(typhoonRadio.isSelected())
+            setSelectedBs(WholejData.BattleShip.Typhoon);
+        else if(maelstromRadio.isSelected())
+            setSelectedBs(WholejData.BattleShip.Maelstrom);
+        else if(tempestRadio.isSelected())
+            setSelectedBs(WholejData.BattleShip.Tempest);
+
+
+        if(lightRadio.isSelected())
         {
-            vtype = VendorType.Oracle;
-            dtype = DomainType.Cluster;
-        }else
-        if(armageddonRadio.isSelected())
-        {
-            vtype = VendorType.Oracle;
-            dtype = DomainType.Res;
-        }else
-        if(rokhRadio.isSelected())
-        {
-             vtype = VendorType.Oracle;
-             dtype = DomainType.Battery;
-        }else
-        if(ravenRadio.isSelected())
-        {
-            vtype = VendorType.Oracle;
-            dtype = DomainType.Ancillary;
-        }else
-        if(abaddonRadio.isSelected())
-        {
-            vtype = VendorType.Oracle;
-            dtype = DomainType.Factory;
-        }else
-        if(scorpionRadio.isSelected())
-        {
-            vtype = VendorType.Oracle;
-            dtype = DomainType.Rg;
-        }else
-        if(megathronRadio.isSelected())
-        {
-            vtype = VendorType.JavaDb;
-            dtype = DomainType.Cluster;
-            jdb = true;
-        }else
-        if(dominixRadio.isSelected())
-        {
-            vtype = VendorType.JavaDb;
-            dtype = DomainType.Res;
-            jdb = true;
-        }else
-        if(hyperionRadio.isSelected())
-        {
-            vtype = VendorType.JavaDb;
-            dtype = DomainType.Factory;
-            jdb = true;
-        }else
-        if(typhoonRadio.isSelected())
-        {
-            vtype = VendorType.JavaDb;
-            dtype = DomainType.Rg;
-            jdb = true;
-        }else
-        if(maelstromRadio.isSelected())
-        {
-            vtype = VendorType.Postgres;
-            dtype = DomainType.Cluster;
-            jdb = false;
-        }else
-        if(tempestRadio.isSelected())
-        {
-            vtype = VendorType.Postgres;
-            dtype = DomainType.Res;
-            jdb = false;
-        }else
-        if(pgBatteryRadio.isSelected())
-        {
-            vtype = VendorType.Postgres;
-            dtype = DomainType.Battery;
-            jdb = false;
-        }else
-        if(pgAncillaryRadio.isSelected())
-        {
-            vtype = VendorType.Postgres;
-            dtype = DomainType.Ancillary;
-            jdb = false;
-        }else
-        if(pgFactoryRadio.isSelected())
-        {
-            vtype = VendorType.Postgres;
-            dtype = DomainType.Factory;
-            jdb = false;
-        }
-//        connection = control.getConnection(StorageType.As, vtype, dtype, ctype);
-        painted.set(false);
-//        userField.setText(connection.getUser());
-//        passwordField.setText(connection.getPassword());
-//        userBaseField.setText(connection.getUserBase());
-//        urlField.setText(connection.getUrl());
-//        daField.setText(connection.getDataAccessor());
-//        homeField.setText(connection.getHome());
-        setState();
-        homeField.setEditable(jdb ? true : false);
-        wholej.swapAndSetFocus(this, userField);
-//        if(!connection.supported)
-        if(false)
-        {
-            saveButton.setEnabled(false);
-            resetButton.setEnabled(false);
-            defaultButton.setEnabled(false);
-            preferencesButton.setEnabled(false);
-            
-            userField.setEnabled(false);
-            passwordField.setEnabled(false);
-            userBaseField.setEnabled(false);
-            urlField.setEnabled(false);
-            daField.setEnabled(false);
+            selectedMassModifier = MassModifier.Light;
             return;
         }
-        userField.setEnabled(true);
-        passwordField.setEnabled(true);
-        userBaseField.setEnabled(true);
-        urlField.setEnabled(true);
-        daField.setEnabled(true);
-        homeField.setEnabled(true);
-//        saveButton.setEnabled(connection.modified);
-        resetButton.setEnabled(false);
-        defaultButton.setEnabled(true);
-//        preferencesButton.setEnabled(connection.modified);
+        if(heavyRadio.isSelected())
+        {
+            selectedMassModifier = MassModifier.Heavy;
+            return;
+        }
+        if(higgsLightRadio.isSelected())
+        {
+            selectedMassModifier = MassModifier.HiggsLight;
+            return;
+        }
+        if(higgsHeavyRadio.isSelected())
+        {
+            selectedMassModifier = MassModifier.HiggsHeavy;
+            return;
+        }
+
+        painted.set(false);
+        setState();
+        wholej.swapAndSetFocus(this, wormholeTypeField);
+        wormholeTypeField.setEnabled(true);
+//        jumpButton.setEnabled(false);
+//        submitButton.setEnabled(false);
     }
-    
+
+    private void setSelectedBs(WholejData.BattleShip bs)
+    {
+        bsLightMassField.setText(WholejData.HoleInfo.getNormalizedMass(bs.getLight()));
+        bsHeavyMassField.setText(WholejData.HoleInfo.getNormalizedMass(bs.getHeavy()));
+        bsHiggsLightMassField.setText(WholejData.HoleInfo.getNormalizedMass(bs.getHiggsLight()));
+        bsHigssHeavyMassField.setText(WholejData.HoleInfo.getNormalizedMass(bs.getHiggsHeavy()));
+        selectedBs = bs;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e)
     {
@@ -536,59 +413,58 @@ public class HolePanel extends JPanel implements ActionListener, DocumentListene
             adjustForSelection();
             return;
         }
-        if(src == saveButton)
+        if(src == submitButton)
         {
-//            connection.guiUser = userField.getText();
-//            connection.guiPassword = passwordField.getText();
-//            connection.guiUserBase = userBaseField.getText();
-//            connection.guiUrl = urlField.getText();
-//            connection.guiDataAccessor = daField.getText();
-//            connection.guiHome = homeField.getText();
-//            connection.savePreferences();
-            saveButton.setEnabled(false);
-            resetButton.setEnabled(false);
-            preferencesButton.setEnabled(false);
-            defaultButton.setEnabled(true);
+            String type = wormholeTypeField.getText().toUpperCase();
+            WholejData.HoleInfo info = wholej.getWormHoleData().getWormholeInfo(type);
+            if(info == null)
+            {
+                FrameBase.displayException(null, wholej, "Not found", "The given wormhole type: " + type + " is not known", null);
+                submitButton.setEnabled(false);
+                jumpButton.setEnabled(false);
+                return;
+            }
+            whClassField.setText(info.type.getClassName());
+            whMaxPossibleMassField.setText(info.getTotalMassRange());
+            whMaxJumpMassField.setText(info.getMaxJumpMass());
+            whMassDownField.setText(info.getMassDownRange());
+            massDownMass.set(info.getMassDown());
+            whMassCriticalField.setText(info.getMassCriticalRange());
+            massRemaining.set(info.maxStableMass.getMass());
+            whMassLeftField.setText(WholejData.HoleInfo.getNormalizedMass(massRemaining.get()));
+            whLifeField.setText(info.maxStableTime.getHours());
+            submitButton.setEnabled(false);
+            jumpButton.setEnabled(true);
             return;
         }
-        if(src == resetButton)
+        if(src == jumpButton)
         {
-            resetButton.setEnabled(false);
-//            preferencesButton.setEnabled(connection.modified);
-            defaultButton.setEnabled(true);
-            adjustForSelection();
+            long mass = selectedMassModifier.getMass(selectedBs);
+            long previousMass = massRemaining.get();
+            mass = previousMass - mass;
+            massRemaining.set(mass);
+            whMassLeftField.setText(WholejData.HoleInfo.getNormalizedMass(mass));
             return;
         }
-        if(src == defaultButton)
+        if(src == massDownButton)
         {
-            painted.set(false);
-            resetButton.setEnabled(true);
-            preferencesButton.setEnabled(true);
-            defaultButton.setEnabled(false);
-//            userField.setText(connection.defaultUser);
-//            passwordField.setText(connection.defaultPassword);
-//            userBaseField.setText(connection.defaultUserBase);
-//            urlField.setText(connection.defaultUrl);
-//            daField.setText(connection.defaultDataAccessor);
-//            homeField.setText(connection.defaultHome);
-            wholej.swapAndSetFocus(this, userField);
+            massRemaining.set(massDownMass.get());
+            whMassLeftField.setText(WholejData.HoleInfo.getNormalizedMass(massRemaining.get()));
             return;
         }
-        if(src == preferencesButton)
+    }
+
+    private void setMassRemaining(boolean isJump)
+    {
+        long mass = selectedMassModifier.getMass(selectedBs);
+        long previousMass = massRemaining.get();
+        if(isJump)
         {
-            painted.set(false);
-            resetButton.setEnabled(true);
-            preferencesButton.setEnabled(false);
-            defaultButton.setEnabled(true);
-//            userField.setText(connection.prefUser);
-//            passwordField.setText(connection.prefPassword);
-//            userBaseField.setText(connection.prefUserBase);
-//            urlField.setText(connection.prefUrl);
-//            daField.setText(connection.prefDataAccessor);
-//            homeField.setText(connection.prefHome);
-            wholej.swapAndSetFocus(this, userField);
-            return;
+            mass = previousMass - mass;
+            massRemaining.set(mass);
         }
+        whMassLeftField.setText(WholejData.HoleInfo.getNormalizedMass(mass));
+
     }
     
     @Override
@@ -596,16 +472,9 @@ public class HolePanel extends JPanel implements ActionListener, DocumentListene
     {
         if(!painted.get())
             return;
-        saveButton.setEnabled(true);
-        preferencesButton.setEnabled(true);
-//        connection.modified = true;
-//        connection.guiUser = userField.getText();
-//        connection.guiPassword = passwordField.getText();
-//        connection.guiUserBase = userBaseField.getText();
-//        connection.guiUrl = urlField.getText();
-//        connection.guiDataAccessor = daField.getText();
-//        connection.guiHome = homeField.getText();
+        submitButton.setEnabled(true);
     }
+
     @Override public void insertUpdate(DocumentEvent e){changedUpdate(null);}
     @Override public void removeUpdate(DocumentEvent e){changedUpdate(null);}
 
@@ -618,5 +487,41 @@ public class HolePanel extends JPanel implements ActionListener, DocumentListene
     @Override
     public void windowLostFocus(WindowEvent e)
     {
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e)
+    {
+        if(e.getKeyChar() == '\n')
+        {
+            ActionEvent ae = new ActionEvent(submitButton, 0, null);
+            actionPerformed(ae);
+            return;
+        }
+        jumpButton.setEnabled(false);
+        massRemaining.set(0);
+        whMassLeftField.setText(WholejData.HoleInfo.getNormalizedMass(massRemaining.get()));
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e){}
+
+    @Override
+    public void keyReleased(KeyEvent e){}
+
+    private enum MassModifier
+    {
+        Light, Heavy, HiggsLight, HiggsHeavy;
+
+        public long getMass(WholejData.BattleShip bs)
+        {
+            if(this == Light)
+                return bs.getLight();
+            if(this == Heavy)
+                return bs.getHeavy();
+            if(this == HiggsLight)
+                return bs.getHiggsLight();
+            return bs.getHiggsHeavy();
+        }
     }
 }

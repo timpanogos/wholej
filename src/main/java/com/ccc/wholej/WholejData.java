@@ -16,6 +16,7 @@
 */
 package com.ccc.wholej;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,14 +25,15 @@ public class WholejData
 {
     private final Map<String, HoleInfo> map;
 
-    private WholejData()
+    public WholejData()
     {
         map = new HashMap<>();
+        init();
     }
 
-    public static void main(String[] args)
+    public HoleInfo getWormholeInfo(String type)
     {
-        System.out.println("hello world");
+        return map.get(type);
     }
 
     private void init()
@@ -128,55 +130,54 @@ public class WholejData
         map.put("Z971", new HoleInfo("Z971", WhClass.One, MaxStableMass.One, MaxJumpMass.Twenty, MaxStableTime.Short));
     }
 
-    private class HoleInfo
+    public enum WhClass
     {
-        private final String name;
-        private final WhClass type;
-        private final MaxStableMass maxStableMass;
-        private final MaxJumpMass maxJumpMass;
-        private final MaxStableTime maxStableTime;
+        Unknown("unknown"), Null("NULL"), Ls("Low-Sec"), Hs("Hi-Sec"),
+        One("C1"), Two("C2"), Three("C3"), Four("C4"), Five("C5"), Six("C6"),
+        Thirteen("C13"), Thera("Thera"),
+        Barbican("Barbican"), Conflux("Conflux"), Vidette("Vidette"), Sentinel("Sentinel"), Redoubt("Redoubt");
 
-        private HoleInfo(String name, WhClass type, MaxStableMass maxStableMass, MaxJumpMass maxJumpMass, MaxStableTime maxStableTime)
+        WhClass(String value)
         {
-            this.name = name;
-            this.type = type;
-            this.maxStableMass = maxStableMass;
-            this.maxJumpMass = maxJumpMass;
-            this.maxStableTime = maxStableTime;
+            this.value = value;
         }
+        public String getClassName()
+        {
+            return value;
+        }
+        private String value;
     }
 
-    private enum WhClass{Unknown, Null, Ls, Hs, One, Two, Three, Four, Five, Six, Thirteen, Barbican, Conflux, Vidette, Sentinel, Redoubt, Thera, Frig}
-    {
-    }
-
-    private enum MaxStableMass
+    public enum MaxStableMass
     {
         One(100), Five(500), SevenFifty(750), OneK(1000), Two(2000), Three(3000), Four(4000), FiveK(5000);
-        MaxStableMass(int gg)
+        MaxStableMass(long gg)
         {
             this.gg = gg;
         }
-        private int gg;
+        public long getMass() { return gg * 1000000; }
+        private long gg;
     }
 
     private enum MaxJumpMass
     {
         Five(5), Twenty(20), OneK(1000), OneThreeFifty(1350), OneEight(1800), ThreeH(300);
-        MaxJumpMass(int gg)
+        MaxJumpMass(long gg)
         {
             this.gg = gg;
         }
-        private int gg;
+        private long getMass() { return gg * 1000000; }
+        private long gg;
     }
 
-    private enum MaxStableTime
+    public enum MaxStableTime
     {
         Short(16), Medium(24), Long(48);
         MaxStableTime(int value)
         {
             this.value = value;
         }
+        public String getHours() { return value + "hrs"; }
         private int value;
     }
 
@@ -187,27 +188,109 @@ public class WholejData
         Megathron(98400000), Dominix(100250000), Hyperion(100200000),       // gallente
         Typhoon(100600000), Maelstrom(103600000), Tempest(99500000);        // minmatar
 
-        BattleShip(int value)
+        BattleShip(long value)
         {
             this.value = value;
         }
-        private int getLight()
+        public long getLight()
         {
             return value;
         }
-        private int getHiggsLight()
+        public long getHiggsLight()
         {
             return value * 2;
         }
-        private int getHeavy()
+        public long getHeavy()
         {
             return value + (value / 2);
         }
-        private int getHiggsHeavy()
+        public long getHiggsHeavy()
         {
             return (value * 2) + (value / 2);
         }
+        private long value;
+    }
 
-        private int value;
+    public static class HoleInfo
+    {
+        private static String MassDecimalFormat = "###,###.###";
+        public final String name;
+        public final WhClass type;
+        public final MaxStableMass maxStableMass;
+        public final MaxJumpMass maxJumpMass;
+        public final MaxStableTime maxStableTime;
+
+        private HoleInfo(String name, WhClass type, MaxStableMass maxStableMass, MaxJumpMass maxJumpMass, MaxStableTime maxStableTime)
+        {
+            this.name = name;
+            this.type = type;
+            this.maxStableMass = maxStableMass;
+            this.maxJumpMass = maxJumpMass;
+            this.maxStableTime = maxStableTime;
+        }
+
+        public static String getNormalizedMass(long mass)
+        {
+            double dmass = mass / 1000000.0;
+            DecimalFormat df = new DecimalFormat(MassDecimalFormat);
+            return df.format(dmass) + "gg";
+
+//            if(mass >= 1000000000)
+//                return (mass / 1000000.0) + "gg";
+//            else
+//                return mass + "kg";
+        }
+
+        public String getMaxJumpMass()
+        {
+            return getNormalizedMass(maxJumpMass.getMass());
+        }
+
+        public String getTotalMassRange()
+        {
+            long mass = maxStableMass.getMass();
+            long err = mass / 10;
+            long top = mass + err;
+            long bottom = mass - err;
+            return
+                getNormalizedMass(mass) + " (" +
+                getNormalizedMass(bottom) + " to " +
+                getNormalizedMass(top) + ")";
+        }
+
+        public long getMassDown()
+        {
+            long mass = maxStableMass.getMass();
+            long err = mass / 10;
+            long bottom = mass - err;
+            bottom /= 2;
+            return bottom;
+        }
+
+        public String getMassDownRange()
+        {
+            long mass = maxStableMass.getMass();
+            long err = mass / 10;
+            long top = mass + err;
+            long bottom = mass - err;
+            top /= 2;
+            bottom /= 2;
+            return
+                getNormalizedMass(bottom) + " to " +
+                getNormalizedMass(top);
+        }
+
+        public String getMassCriticalRange()
+        {
+            long mass = maxStableMass.getMass();
+            long err = mass / 10;
+            long top = mass + err;
+            long bottom = mass - err;
+            top /= 10;
+            bottom /= 10;
+            return
+                getNormalizedMass(bottom) + " to " +
+                getNormalizedMass(top);
+        }
     }
 }

@@ -13,6 +13,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import com.ccc.tools.app.swing.FrameBase;
+import com.ccc.wholej.WholejData;
 import com.ccc.wholej.swing.view.HolePanel;
 
 public final class Wholej extends FrameBase implements FrameBase.CloseListener
@@ -24,8 +25,9 @@ public final class Wholej extends FrameBase implements FrameBase.CloseListener
     
     private static final String DefaultLogFile = "/var/opt/ccc/wholej/log/wholej.log";
     
-    private static final String ApplicationTitle = "WholejData";
-    
+    private static final String ApplicationTitle = "Wholej";
+
+    private final WholejData wormholeData;
 //    private final StorageControl storageControl;
 //    private final ConnectionControl connectionControl;
 //    private final org.emitdo.research.app.dbAdmin.model.DerbyServerData derbyServerData;
@@ -43,6 +45,7 @@ public final class Wholej extends FrameBase implements FrameBase.CloseListener
 //        connectionControl = new ConnectionControl(this);
 //        storageControl = new StorageControl(this);
         addCloseListener(this);
+        wormholeData = new WholejData();
 //        derbyServerData = new DerbyServerData(getUserRoot());
 //        rmiData = new RmiData(userRoot);
 //        rmiJdbClusterData = new RmiJdbData(DomainType.Cluster, rmiData, userRoot);
@@ -57,16 +60,11 @@ public final class Wholej extends FrameBase implements FrameBase.CloseListener
 //        connectionControl.setBusy(busy);
     }
     
-//    public ConnectionControl getConnectionControl()
-//    {
-//        return connectionControl;
-//    }
-//
-//    public StorageControl getStorageControl()
-//    {
-//        return storageControl;
-//    }
-    
+    public WholejData getWormHoleData()
+    {
+        return wormholeData;
+    }
+
     @Override
     public JMenuBar createMenu()
     {
